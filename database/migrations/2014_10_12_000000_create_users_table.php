@@ -15,10 +15,14 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('name')->nullable();
             $table->string('email');
+            $table->string('mobile')->nullable();
             $table->string('password');
-            $table->integer('account_id');
-            $table->string('account_type');
+//            $table->integer('account_id');
+//            $table->string('account_type');
+            $table->integer('account_level');
+            $table->string('photo')->nullable();
             $table->text('fcm_token')->nullable();
             $table->string('api_token', 60)->unique()->nullable();
             $table->string('verification_token', 60)->nullable();

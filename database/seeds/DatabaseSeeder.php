@@ -12,5 +12,12 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call(LaratrustSeeder::class);
+
+        $admin = factory(App\Models\User::class)->create();
+        $admin->email = 'admin@example.com';
+        $admin->save();
+        if($admin){
+            $admin->attachRole('admin');
+        }
     }
 }

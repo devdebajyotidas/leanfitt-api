@@ -4,18 +4,22 @@ namespace App\Models;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
     use Notifiable;
-
+    use SoftDeletes;
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'email',
+        'password',
+        'account_level',
+        'verification_token'
     ];
 
     /**
@@ -26,4 +30,27 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at'
+    ];
+
+    public static $rules = [
+        "create" => [
+            'email' => 'email|unique:users',
+            'password' => 'required|confirmed|min:6',
+        ],
+        "update" => [
+            'email' => 'email',
+            'password' => 'confirmed|min:6',
+        ],
+
+    ];
+
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = bcrypt($value);
+    }
 }
