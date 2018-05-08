@@ -15,6 +15,10 @@ class CreateUserLogsTable extends Migration
     {
         Schema::create('user_logs', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('account_id');
+            $table->string('device_token');
+            $table->string('device_type');
+            $table->dateTime('logout_time')->nullable();
             $table->timestamps();
         });
     }
