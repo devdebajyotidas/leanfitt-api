@@ -19,8 +19,6 @@ class CreateUsersTable extends Migration
             $table->string('email');
             $table->string('mobile')->nullable();
             $table->string('password');
-//            $table->integer('account_id');
-//            $table->string('account_type');
             $table->integer('account_level');
             $table->string('photo')->nullable();
             $table->text('fcm_token')->nullable();
