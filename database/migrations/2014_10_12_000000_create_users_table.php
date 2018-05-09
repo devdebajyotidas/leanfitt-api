@@ -21,7 +21,6 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->integer('account_level');
             $table->string('photo')->nullable();
-            $table->text('fcm_token')->nullable();
             $table->string('api_token', 60)->unique()->nullable();
             $table->string('verification_token', 60)->nullable();
             $table->tinyInteger('is_verified')->default('0');
