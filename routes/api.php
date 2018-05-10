@@ -20,5 +20,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::group(['namespace' => 'API'], function () {
 
     Route::post('account/login', 'UserController@login');
+    Route::post('account/signup', 'UserController@signup');
+    Route::post('account/recovery', 'UserController@recovery');
 
 });

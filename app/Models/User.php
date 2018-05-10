@@ -16,10 +16,14 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
+        'name',
         'email',
         'password',
         'account_level',
-        'verification_token'
+        'verification_token',
+        'mobile',
+        'photo',
+        'api_token'
     ];
 
     /**
@@ -39,7 +43,7 @@ class User extends Authenticatable
 
     public static $rules = [
         "create" => [
-            'email' => 'email|unique:users',
+            'email' => 'required|email|unique:users',
             'password' => 'required|confirmed|min:6',
         ],
         "update" => [
