@@ -22,5 +22,7 @@ Route::group(['namespace' => 'API'], function () {
     Route::post('account/login', 'UserController@login');
     Route::post('account/signup', 'UserController@signup');
     Route::post('account/recovery', 'UserController@recovery');
+    Route::post('account/recovery/check', 'UserController@verifyEmailOtp');
+    Route::post('account/recovery/reset', 'UserController@resetPassword');
 
 });

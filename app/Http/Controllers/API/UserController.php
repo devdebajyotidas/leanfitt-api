@@ -80,6 +80,7 @@ class UserController extends Controller
 
            if($exist > 0){
                $response->success=false;
+               $response->data=null;
                $response->message="Account already exist";
                return response()->json($response);
            }
@@ -101,19 +102,24 @@ class UserController extends Controller
 
                Mail::to($request->email)->send(new signupmail($request->all()));
 
+               unset($user['verification_token']);
+
                DB::commit();
                $response->success=true;
+               $response->data=$user;
                $response->message="Account has been created";
            }
            else{
                DB::abort();
                $response->success=false;
+               $response->data=null;
                $response->message="Unable to create your account";
            }
 
         }
         else{
             $response->success=false;
+            $response->data=null;
             $response->message=$validator->errors()->first();
         }
 
@@ -137,6 +143,7 @@ class UserController extends Controller
         }
         else{
             $response->success=false;
+            $response->request_id=null;
             $response->message='Unable to find your account';
             return response()->json($response);
         }
@@ -152,10 +159,12 @@ class UserController extends Controller
 
         if(Mail::failures()){
             $response->success=false;
+            $response->request_id=null;
             $response->message="Unable to sent the otp try again";
         }
         else{
             $response->success=true;
+            $response->request_id=$reset['request_id'];
             $response->message="An otp has been sent";
         }
 
