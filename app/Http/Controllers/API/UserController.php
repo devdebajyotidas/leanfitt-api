@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Mail\WelcomeMail;
 use App\Models\PasswordResetLog;
 use App\Models\UserLog;
 use Illuminate\Http\Request;
@@ -100,7 +101,10 @@ class UserController extends Controller
                   UserLog::create($log);
                }
 
-               Mail::to($request->email)->send(new signupmail($request->all()));
+               $data['name']=$user->name;
+               $data['url']=url('/verification/email?token=').$user->verification_token;
+
+               Mail::to($request->email)->send(new WelcomeMail($data));
 
                unset($user['verification_token']);
 

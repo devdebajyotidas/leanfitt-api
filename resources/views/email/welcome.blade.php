@@ -304,7 +304,7 @@
                                 <tr>
                                     <td>
                                         <h3>Welcome Abord!</h3>
-                                        <p>Hello {{isset($name) ? $name : '' }}, Thanks for joining Leanfitt.Here at Leanfitt we always try to provide the best.We hope we can be useful towards your needs </p>
+                                        <p>Hello {{isset($data->name) ? $data->name : '' }}, Thanks for joining Leanfitt.Here at Leanfitt we always try to provide the best.We hope we can be useful towards your needs </p>
                                         <p>To enjoy inturrepted services please confirm your email address with one small step. Follow this link below</p>
                                         <table border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
                                             <tbody>
@@ -313,7 +313,7 @@
                                                     <table border="0" cellpadding="0" cellspacing="0">
                                                         <tbody>
                                                         <tr>
-                                                            <td> <a href="{{isset($url) ? $url : '' }}" target="_blank">Confirm email address</a> </td>
+                                                            <td> <a href="{{isset($data->url) ? $data->url : '' }}" target="_blank">Confirm email address</a> </td>
                                                         </tr>
                                                         </tbody>
                                                     </table>
