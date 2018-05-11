@@ -150,12 +150,13 @@ class UserController extends Controller
 
 
         $reset['request_id']=md5(time());
-        $reset['code']=$email['code']=random_int(111111,999999);
+        $reset['code']=$data['code']=random_int(111111,999999);
         $reset['account_id']=isset($user->id) ? $user->id : '';
+        $data['name']=$user->name;
 
         PasswordResetLog::create($reset);
 
-        Mail::to($email)->send(new PasswordResetMail($email));
+        Mail::to($email)->send(new PasswordResetMail($data));
 
         if(Mail::failures()){
             $response->success=false;
