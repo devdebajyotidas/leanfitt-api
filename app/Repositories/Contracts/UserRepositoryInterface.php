@@ -6,9 +6,21 @@ use App\Models\User;
 
 interface UserRepositoryInterface
 {
-    public function isSuperAdmin($user);
+    /**
+     * @param int|User $user
+     * @return boolean
+     */
+    public function isSuperAdmin($user):bool;
 
-    public function isAdmin($user);
+    /**
+     * @param int|User $user
+     * @return bool
+     */
+    public function isAdmin($user):bool;
 
-    public function isEmployee($user);
+    /**
+     * @param int|User $user
+     * @return bool
+     */
+    public function isEmployee($user):bool;
 }

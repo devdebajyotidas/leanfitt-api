@@ -71,4 +71,5 @@ interface EmployeeRepositoryInterface
      * @return bool
      */
     public function hasSubscription($employee): bool;
+
 }
