@@ -24,5 +24,13 @@ interface LeanToolsRepositoryInterface
      * @param string $name
      * @return Collection
      */
-    public function getToolDetailsByName($tool,string  $name):Collection; // return type can be changed
+    public function getToolDetailsByName($tool,string  $name):Collection; // return type can be changed, name Ex. overview
+
+    /**
+     * @param int|LeanTool $tool
+     * @return bool
+     */
+    public function isArchived($tool):bool;
+
+    
 }
