@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateToolSubscriptionsTable extends Migration
+class CreateMediaTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,13 @@ class CreateToolSubscriptionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('tool_subscriptions', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('tool_id');
-            $table->integer('organization_id');
-            $table->string('subscription_id');
-            $table->dateTime('expiry_date'); //check
+        Schema::create('media', function (Blueprint $table) {
+            $table->string('name')->nullable();
+            $table->string('file_name');
+            $table->string('mime_type')->nullable();
+            $table->unsignedInteger('size')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -30,6 +30,6 @@ class CreateToolSubscriptionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tool_subscriptions');
+        Schema::dropIfExists('media');
     }
 }

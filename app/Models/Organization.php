@@ -10,6 +10,23 @@ class Organization extends Model
         'name',
         'email',
         'phone',
-        'logo'
+        'featured_image',
+        'contact_person',
+        'is_archived'
     ];
+
+    public function departments()
+    {
+        return $this->hasMany(Department::class);
+    }
+
+    public function employees()
+    {
+        return $this->hasManyThrough(Employee::class, Department::class);
+    }
+
+    public function admins()
+    {
+        return $this->belongsToMany(Admin::class);
+    }
 }

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePasswordResetLogsTable extends Migration
+class CreateLeanToolsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,15 @@ class CreatePasswordResetLogsTable extends Migration
      */
     public function up()
     {
-        Schema::create('password_reset_logs', function (Blueprint $table) {
+        Schema::create('lean_tools', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('account_id');
-            $table->integer('code');
-            $table->string('request_id');
+            $table->string('name');
+            $table->longText('overview');
+            $table->longText('steps');
+            $table->longText('case_studies');
+            $table->longText('quiz');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -29,6 +32,6 @@ class CreatePasswordResetLogsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('password_reset_logs');
+        Schema::dropIfExists('lean_tools');
     }
 }

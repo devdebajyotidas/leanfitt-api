@@ -12,6 +12,6 @@ class OrganizationAdmin extends Model
 
     protected $fillable = [
         'organization_id',
-        'account_id',
+        'admin_id',
     ];
 }

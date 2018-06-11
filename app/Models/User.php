@@ -5,21 +5,27 @@ namespace App\Models;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use UserAttributes;
 
 class User extends Authenticatable
 {
     use Notifiable;
     use SoftDeletes;
+    use UserAttributes;
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
+        'first_name',
+        'last_name',
         'email',
+        'phone',
+        'avatar',
         'password',
-        'account_level',
-        'verification_token'
+        'verification_token',
+        'is_verified'
     ];
 
     /**
@@ -28,7 +34,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
+        'remember_token',
     ];
 
     protected $dates = [
@@ -52,5 +59,15 @@ class User extends Authenticatable
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = bcrypt($value);
+    }
+
+    public function employee()
+    {
+        return $this->hasOne(Employee::class);
+    }
+
+    public function admin()
+    {
+        return $this->hasOne(Admin::class);
     }
 }

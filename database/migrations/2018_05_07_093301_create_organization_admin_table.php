@@ -16,7 +16,7 @@ class CreateOrganizationAdminTable extends Migration
         Schema::create('organization_admin', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('organization_id');
-            $table->integer('account_id');
+            $table->integer('admin_id');
         });
     }
 
