@@ -18,11 +18,12 @@ class CreateActionItemsTable extends Migration
             $table->string('name');
             $table->integer('tool_id');
             $table->integer('board_id');
+            $table->integer('position');
             $table->date('due_date');
-            $table->tinyInteger('is_completed')->default('0');
-            $table->tinyInteger('in_review')->default('0');
+//            $table->tinyInteger('is_completed')->default('0');
+//            $table->tinyInteger('in_review')->default('0');
             $table->tinyInteger('is_archived')->default('0');
-            $table->text('note')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }
