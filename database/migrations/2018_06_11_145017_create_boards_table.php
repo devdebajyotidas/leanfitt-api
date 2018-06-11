@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateActionItemAssignedsTable extends Migration
+class CreateBoardsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,9 @@ class CreateActionItemAssignedsTable extends Migration
      */
     public function up()
     {
-        Schema::create('action_item_assigneds', function (Blueprint $table) {
+        Schema::create('boards', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('item_id');
-            $table->integer('assignee_id');
-            $table->integer('assignor_id');
+            $table->string('name');
             $table->timestamps();
         });
     }
@@ -29,6 +27,6 @@ class CreateActionItemAssignedsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('action_item_assigneds');
+        Schema::dropIfExists('boards');
     }
 }

@@ -17,6 +17,7 @@ class CreateActionItemsTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->integer('tool_id');
+            $table->integer('board_id');
             $table->date('due_date');
             $table->tinyInteger('is_completed')->default('0');
             $table->tinyInteger('in_review')->default('0');

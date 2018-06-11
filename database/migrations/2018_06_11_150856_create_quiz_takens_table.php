@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateActionItemAssignedsTable extends Migration
+class CreateQuizTakensTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ class CreateActionItemAssignedsTable extends Migration
      */
     public function up()
     {
-        Schema::create('action_item_assigneds', function (Blueprint $table) {
+        Schema::create('quiz_takens', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('item_id');
-            $table->integer('assignee_id');
-            $table->integer('assignor_id');
+            $table->integer('tool_id');
+            $table->integer('user_id');
+            $table->double('result');
+            $table->tinyInteger('is_completed')->default(0);
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ class CreateActionItemAssignedsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('action_item_assigneds');
+        Schema::dropIfExists('quiz_takens');
     }
 }
