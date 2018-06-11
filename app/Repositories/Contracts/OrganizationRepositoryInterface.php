@@ -17,7 +17,7 @@ interface OrganizationRepositoryInterface
     /**
      * @return Collection
      */
-    public function getAllOrganizationByAdmin():Collection;
+    public function getAllOrganizationByUser():Collection;
 
     /**
      * @return Collection
@@ -57,6 +57,6 @@ interface OrganizationRepositoryInterface
      * @param int|Organization $organization
      * @return integer
      */
-    public function countSubscription($organization):int ;
+    public function getSubscription($organization):int ;
 
 }
