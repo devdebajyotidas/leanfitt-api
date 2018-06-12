@@ -2,17 +2,17 @@
 
 namespace App\Services\Contracts;
 
-interface QuizTakenServiceInterface
+interface QuizResultServiceInterface
 {
     /**
      * @param $data
      * @return bool
      */
-    public function addQuizTaken($data):bool;
+    public function addQuizResult($data):bool;
 
     /**
      * @param $data
      * @return bool
      */
-    public function updateQuizTaken($data):bool;
+    public function updateQuizResult($data):bool;
 }
