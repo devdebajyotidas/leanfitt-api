@@ -3,6 +3,7 @@
 namespace App\Repositories\Contracts;
 
 use App\Models\ActionItem;
+use App\Models\Board;
 use App\Models\Department;
 use App\Models\LeanTool;
 use App\Models\Project;
@@ -61,11 +62,10 @@ interface ActionItemRepositoryInterface
      */
      public function actionItemByDepartment($item,$department):Collection;
 
-     /*Needs review*/
-
-     public function getAllCommentsFromAI($item):Collection;
-     public function getAllMediaFromAI($item):Collection;
-     public function getAllLabelFromAI($item):Collection;
-     public function getAllChecklistFromAI($item):Collection;
+    /**
+     * @param int|Board $board
+     * @return Collection
+     */
+     public function getActionItemByBoard($board):Collection;
 
 }
