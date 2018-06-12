@@ -35,5 +35,5 @@ interface EmployeeServiceInterface
     /**
      * @param int|Employee $employee
      */
-    public function cancelSubscription($employee): void;
+    public function cancelSubscription($employee): void; //if cancel subscription is here then addSubscription should be here?
 }
