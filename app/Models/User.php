@@ -70,4 +70,21 @@ class User extends Authenticatable
     {
         return $this->hasOne(Admin::class);
     }
+
+    public function item(){
+        return $this->hasMany(ActionItem::class);
+    }
+
+    public function assignee(){
+        return $this->hasMany(ActionItemAssignee::class);
+    }
+
+    public function comment(){
+        return $this->hasMany(Comment::class);
+    }
+
+    public function quizResult(){
+        return $this->hasMany(QuizResult::class);
+    }
+
 }

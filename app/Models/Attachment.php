@@ -4,11 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Comment extends Model
+class Attachment extends Model
 {
-    protected $fillable=[
+    protected  $table=[
         'action_item_id',
-        'comment',
+        'url',
         'user_id'
     ];
 
@@ -19,5 +19,4 @@ class Comment extends Model
     public function user(){
         return $this->belongsTo(User::class);
     }
-
 }
