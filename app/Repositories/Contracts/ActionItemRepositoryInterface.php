@@ -60,7 +60,7 @@ interface ActionItemRepositoryInterface
      * @param int | Department $department
      * @return Collection
      */
-     public function actionItemByDepartment($item,$department):Collection;
+     public function getActionItemByDepartment($item,$department):Collection;
 
     /**
      * @param int|Board $board
