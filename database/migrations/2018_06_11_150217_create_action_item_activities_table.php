@@ -15,9 +15,9 @@ class CreateActionItemActivitiesTable extends Migration
     {
         Schema::create('action_item_activities', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('item_id');
+            $table->integer('action_item_id');
             $table->text('label');
-            $table->integer('activity_by');
+            $table->integer('user_id'); //activity by
             $table->timestamps();
         });
     }
