@@ -7,7 +7,7 @@ use App\Models\Organization;
 use App\Models\QuizTaken;
 use Illuminate\Support\Collection;
 
-interface QuizTakenRepositoryInterface
+interface QuizResultRepositoryInterface
 {
     /**
      * @return Collection
