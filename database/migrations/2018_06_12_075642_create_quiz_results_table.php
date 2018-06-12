@@ -18,8 +18,8 @@ class CreateQuizResultsTable extends Migration
             $table->integer('lean_tool_id');
             $table->integer('user_id');
             $table->float('score');
-            $table->integer('score')->default(0);
-            $table->integer('score')->default(0);
+            $table->integer('correct')->default(0);
+            $table->integer('incorrect')->default(0);
             $table->tinyInteger('is_completed')->default(0);
             $table->timestamps();
         });
