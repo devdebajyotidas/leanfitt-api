@@ -18,28 +18,28 @@ trait UserAttributes
         return $user;
     }
 
-    public function getFirstName()
+    public function getFirstNameAttribute()
     {
         $user = $this->getUser();
-        return ucfirst($user->first_name);
+        return ucfirst($user->attribute['first_name']);
     }
 
-    public function getLastName()
+    public function getLastNameAttribute()
     {
         $user = $this->getUser();
-        return ucfirst($user->last_name);
+        return ucfirst($user->attribute['last_name']);
     }
 
-    public function getEmail()
+    public function getEmailAttribute()
     {
         $user = $this->getUser();
-        return $user->email;
+        return $user->attribute['email'];
     }
 
-    public function getPhone()
+    public function getPhoneAttribute()
     {
         $user = $this->getUser();
-        return $user->phone;
+        return $user->attribute['phone'];
     }
 
     public function getFullName()
@@ -47,10 +47,10 @@ trait UserAttributes
         return $this->getFirstName() . " " . $this->getLastName();
     }
 
-    public function getAvatar()
+    public function getAvatarAttribute()
     {
         $user = $this->getUser();
-        $avatar = $user->avatar;
+        $avatar = $user->attribute['avatar'];
 
         if (!$avatar)
         {
