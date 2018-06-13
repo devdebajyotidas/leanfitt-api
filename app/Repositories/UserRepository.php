@@ -23,13 +23,13 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
 
     public function isSuperAdmin($id): bool
     {
-        $result=$this->model()->with('admin')->where('id',$id)->first();
-        return $result->admin->is_superadmin==0 ? false : true;
+        $result=$this->model()->find($id)->admin()->where('is_superadmin',1)->count();
+        return $result > 0 ? true : false;
     }
 
     public function isEmployee($id): bool
     {
-        $result=$this->model()->where('id',$id)->withCount('employee')->first();
-        return $result->employee_count > 0 ? true : false;
+        $result=$this->model()->find($id)->employee()->count();
+        return $result > 0 ? true : false;
     }
 }
