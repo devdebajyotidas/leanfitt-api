@@ -19,4 +19,10 @@ interface CommentRepositoryInterface
      * @return Collection
      */
     public function getCommentByActionItem($item):Collection;
+
+    /**
+     * @param int|Project $project
+     * @return Collection
+     */
+    public function getCommentsByProject($project):Collection;
 }
