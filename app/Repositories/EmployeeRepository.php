@@ -18,56 +18,66 @@ class EmployeeRepository extends BaseRepository implements EmployeeRepositoryInt
 
     public function getAllEmployees(): Collection
     {
-        // TODO: Implement getAllEmployees() method.
+        $result=$this->model()->all();
+        return $result;
     }
 
     public function getActiveEmployees(): Collection
     {
-        // TODO: Implement getActiveEmployees() method.
+        $result=$this->model()->where('is_archived',0)->get();
+        return $result;
     }
 
     public function getArchivedEmployees(): Collection
     {
-        // TODO: Implement getArchivedEmployees() method.
+        $result=$this->model()->where('is_archived',1)->get();
+        return $result;
     }
 
     public function getEmployeesByDepartment($department): Collection
     {
-        // TODO: Implement getEmployeesByDepartment() method.
+        $result=$this->model()->where('department_id',$department)->get();
+        return $result;
     }
 
     public function getActiveEmployeesByDepartment($department): Collection
     {
-        // TODO: Implement getActiveEmployeesByDepartment() method.
+        $result=$this->model()->where('is_archived',0)->where('department_id',$department)->get();
+        return $result;
     }
 
     public function getArchivedEmployeesByDepartment($department): Collection
     {
-        // TODO: Implement getArchivedEmployeesByDepartment() method.
+        $result=$this->model()->where('is_archived',1)->where('department_id',$department)->get();
+        return $result;
     }
 
     public function getEmployeesByOrganization($organization): Collection
     {
-        // TODO: Implement getEmployeesByOrganization() method.
+        $result=$this->model()->where('organization_id',$organization)->get();
+        return $result;
     }
 
     public function getActiveEmployeesByOrganization($organization): Collection
     {
-        // TODO: Implement getActiveEmployeesByOrganization() method.
+        $result=$this->model()->where('is_archived',0)->where('organization_id',$organization)->get();
+        return $result;
     }
 
     public function getArchivedEmployeesByOrganization($organization): Collection
     {
-        // TODO: Implement getArchivedEmployeesByOrganization() method.
+        $result=$this->model()->where('is_archived',1)->where('organization_id',$organization)->get();
+        return $result;
     }
 
     public function isArchived($employee): bool
     {
-        // TODO: Implement isArchived() method.
+        $result=$this->model()->find($employee)->where('is_archived',1)->exists();
+        return $result;
     }
 
     public function hasSubscription($employee): bool
     {
-        // TODO: Implement hasSubscription() method.
+       //Need to be revisited
     }
 }

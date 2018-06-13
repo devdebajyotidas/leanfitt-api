@@ -42,9 +42,9 @@ trait UserAttributes
         return $user->attribute['phone'];
     }
 
-    public function getFullName()
+    public function getFullNameAttribute()
     {
-        return $this->getFirstName() . " " . $this->getLastName();
+        return $this->getFirstNameAttribute() . " " . $this->getLastNameAttribute();
     }
 
     public function getAvatarAttribute()
@@ -54,7 +54,7 @@ trait UserAttributes
 
         if (!$avatar)
         {
-            $avatar = "https://ui-avatars.com/api/?name=" . urlencode($this->getFullName());
+            $avatar = "https://ui-avatars.com/api/?name=" . urlencode($this->getFullNameAttribute());
         }
         return $avatar;
     }
