@@ -32,4 +32,8 @@ class Admin extends Model
     {
         return $this->belongsToMany(Organization::class);
     }
+
+    public function organizationAdmin(){
+        return $this->hasMany(OrganizationAdmin::class);
+    }
 }

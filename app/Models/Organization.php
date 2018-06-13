@@ -29,4 +29,8 @@ class Organization extends Model
     {
         return $this->belongsToMany(Admin::class);
     }
+
+    public function organizationAdmin(){
+        return $this->hasMany(OrganizationAdmin::class);
+    }
 }

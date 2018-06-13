@@ -15,18 +15,26 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         return new User();
     }
 
-    public function isAdmin($user): bool
+    public function isAdmin($id): bool
     {
-        // TODO: Implement isAdmin() method.
+        $result=$this->model()->where('id',$id)->withCount('admin')->first();
+        if($result->admin_count > 0){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
-    public function isSuperAdmin($user): bool
+    public function isSuperAdmin($id): bool
     {
-        // TODO: Implement isSuperAdmin() method.
+        $result=$this->model()->with('admin')->where('id',$id)->first();
+        return $result->admin->is_superadmin==0 ? false : true;
     }
 
-    public function isEmployee($user): bool
+    public function isEmployee($id): bool
     {
-        // TODO: Implement isEmployee() method.
+        $result=$this->model()->where('id',$id)->withCount('employee')->first();
+        return $result->employee_count > 0 ? true : false;
     }
 }
