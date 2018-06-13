@@ -17,13 +17,8 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
 
     public function isAdmin($id): bool
     {
-        $result=$this->model()->where('id',$id)->withCount('admin')->first();
-        if($result->admin_count > 0){
-            return true;
-        }
-        else{
-            return false;
-        }
+        $result=$this->model()->find($id)->admin()->count();
+        return $result > 0 ? true : false;
     }
 
     public function isSuperAdmin($id): bool
