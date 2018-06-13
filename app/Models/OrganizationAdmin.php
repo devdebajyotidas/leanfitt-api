@@ -14,4 +14,12 @@ class OrganizationAdmin extends Model
         'organization_id',
         'admin_id',
     ];
+
+    public function admin(){
+        return $this->belongsTo(Admin::class);
+    }
+
+    public function organization(){
+        return $this->belongsTo(Organization::class);
+    }
 }
