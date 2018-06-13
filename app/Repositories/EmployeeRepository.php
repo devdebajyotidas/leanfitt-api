@@ -18,7 +18,8 @@ class EmployeeRepository extends BaseRepository implements EmployeeRepositoryInt
 
     public function getAllEmployees(): Collection
     {
-        // TODO: Implement getAllEmployees() method.
+        $result=$this->model()->all();
+        return $result;
     }
 
     public function getActiveEmployees(): Collection
