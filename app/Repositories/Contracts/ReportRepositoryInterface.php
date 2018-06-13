@@ -17,9 +17,9 @@ interface ReportRepositoryInterface
      */
     public function getAllReportsByProject($project):Collection;
 
-    /**
-     * @param Repo$report
-     * @return Collection
-     */
-    public function getReportDetails($report):Collection;
+//    /**
+//     * @param Repo$report
+//     * @return Collection
+//     */
+//    public function getReportDetails($report):Collection;
 }
