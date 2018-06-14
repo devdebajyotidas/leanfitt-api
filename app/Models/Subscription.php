@@ -9,9 +9,7 @@ class Subscription extends Model
     protected $table=[
         'employee_id',
         'subscription_id',
-        'amount',
-        'expiry_date',
-        'plan_type'
+        'is_subscribed'
     ];
 
     public function employee(){

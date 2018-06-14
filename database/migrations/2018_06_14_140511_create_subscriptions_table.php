@@ -16,10 +16,8 @@ class CreateSubscriptionsTable extends Migration
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('employee_id');
-            $table->string('subscription_id');
-            $table->double('amount');
-            $table->date('expiry_date');
-            $table->string('plan_type');
+            $table->integer('subscription_id');
+            $table->tinyInteger('is_subscribed')->default(0);
             $table->timestamps();
         });
     }
