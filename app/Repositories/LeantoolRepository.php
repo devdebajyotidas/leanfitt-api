@@ -14,24 +14,9 @@ class LeantoolRepository extends BaseRepository implements LeanToolsRepositoryIn
         return new LeanTool();
     }
 
-    public function getAllTools(): Collection
+    public function getToolDetailsByName($id, string $name): Collection
     {
-        // TODO: Implement getAllTools() method.
-    }
-
-    public function getToolDetails($tool): Collection
-    {
-        // TODO: Implement getToolDetails() method.
-    }
-
-    public function getToolDetailsByName($tool, string $name): Collection
-    {
-        // TODO: Implement getToolDetailsByName() method.
-    }
-
-    public function isArchived($tool): bool
-    {
-        // TODO: Implement isArchived() method.
+        $this->renderJSON($this->model()->find($id)->first($name));
     }
 
 }
