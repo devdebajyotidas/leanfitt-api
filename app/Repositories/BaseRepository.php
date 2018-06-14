@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use App\Repositories\Contracts\BaseRepositoryInterface;
 
@@ -46,7 +47,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
      */
     public function find($id, $columns = ['*'])
     {
-        // TODO: Implement find() method.
+        return $this->renderJSON($this->model->find($id)->get($columns));
     }
 
     /**
@@ -54,7 +55,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
      */
     public function findBy($attribute, $value, $columns = ['*'])
     {
-        // TODO: Implement findBy() method.
+        return $this->renderJSON($this->model->where($attribute,$value)->get($columns));
     }
 
     /**
@@ -62,7 +63,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
      */
     public function findWhere(array $where, $columns = ['*'])
     {
-        // TODO: Implement findWhere() method.
+        return $this->renderJSON($this->model->where($where)->get($columns));
     }
 
     /**
@@ -70,7 +71,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
      */
     public function findWhereIn($field, array $values, $columns = ['*'])
     {
-        // TODO: Implement findWhereIn() method.
+        return $this->renderJSON($this->model->whereIn($field,$values)->get($columns));
     }
 
     /**
@@ -78,7 +79,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
      */
     public function findWhereNotIn($field, array $values, $columns = ['*'])
     {
-        // TODO: Implement findWhereNotIn() method.
+        return $this->renderJSON($this->model->whereNotIn($field,$values)->get($columns));
     }
 
     /**
@@ -86,7 +87,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
      */
     public function first($columns = ['*'])
     {
-
+        return $this->renderJSON($this->model->first($columns));
     }
 
     /**
@@ -94,7 +95,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
      */
     public function firstOrNew(array $attributes = [])
     {
-        // TODO: Implement firstOrNew() method.
+       return $this->renderJSON($this->model->firstOrNew($attributes));
     }
 
     /**
@@ -102,7 +103,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
      */
     public function firstOrCreate(array $attributes = [])
     {
-        // TODO: Implement firstOrCreate() method.
+        return $this->renderJSON($this->model->firstOrCreate($attributes));
     }
 
     /**
@@ -110,7 +111,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
      */
     public function create(array $attributes)
     {
-        // TODO: Implement create() method.
+        return $this->renderJSON($this->model->save($attributes));
     }
 
     /**
@@ -118,7 +119,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
      */
     public function update(array $attributes, $id)
     {
-        // TODO: Implement update() method.
+        return $this->renderJSON($this->model->find($id)->update($attributes));
     }
 
     /**
@@ -126,7 +127,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
      */
     public function delete($id)
     {
-        // TODO: Implement delete() method.
+        return $this->renderJSON($this->model->delete($id));
     }
 
 
@@ -166,13 +167,24 @@ abstract class BaseRepository implements BaseRepositoryInterface
         return $this;
     }
 
-    public function renderJSON()
+    public function renderJSON($data)
     {
-
+          if($this->isJson($data))
+              return $data;
+          else
+              return json_encode($data);
     }
 
-    public function renderArray()
-    {
+    function isJson($data){
+        json_decode($data);
+        return (json_last_error() == JSON_ERROR_NONE);
+    }
 
+    public function renderArray($data)
+    {
+       if(is_array($data))
+           return $data;
+       else
+           return array($data);
     }
 }
