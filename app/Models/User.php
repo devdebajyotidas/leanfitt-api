@@ -87,4 +87,8 @@ class User extends Authenticatable
         return $this->hasMany(QuizResult::class);
     }
 
+    public function project(){
+        return $this->belongsTo(Project::class);
+    }
+
 }

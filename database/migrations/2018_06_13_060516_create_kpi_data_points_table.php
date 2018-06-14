@@ -15,6 +15,7 @@ class CreateKpiDataPointsTable extends Migration
     {
         Schema::create('kpi_data_points', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('kpi_id');
             $table->float('value');
             $table->date('target_date');
             $table->timestamps();
