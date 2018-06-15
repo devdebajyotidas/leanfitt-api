@@ -53,24 +53,18 @@ interface ActionItemRepositoryInterface
      * @param int | User $user
      * @return Collection
      */
-     public function getActionItemByMember($filter,$sort,$sort_val,$user):Collection;
+     public function getActionItemByMember($user):Collection;
 
     /**
-     * @param $filter
-     * @param $sort
-     * @param $sort_val
      * @param $department
      * @return Collection
      */
-     public function getActionItemByDepartment($filter,$sort,$sort_val,$department):Collection;
+     public function getActionItemByDepartment($department):Collection;
 
     /**
-     * @param array $filter
-     * @param string $sort
-     * @param mixed $sort_val
-     * @param int $board
+     * @param $board
      * @return Collection
      */
-     public function getActionItemByBoard($filter,$sort,$sort_val,$board):Collection;
+     public function getActionItemByBoard($board):Collection;
 
 }

@@ -30,6 +30,6 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     public function isEmployee($id): bool
     {
         $result=$this->model()->find($id)->employee()->count();
-        return $this->renderJSON( $result > 0 ? true : false);
+        return $result > 0 ? true : false;
     }
 }

@@ -39,7 +39,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
      */
     public function all($columns = ['*'])
     {
-        return $this->renderJSON($this->model->all($columns));
+        return $this->model->all($columns);
     }
 
     /**
@@ -47,7 +47,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
      */
     public function find($id, $columns = ['*'])
     {
-        return $this->renderJSON($this->model->find($id)->get($columns));
+        return $this->model->find($id)->get($columns);
     }
 
     /**
@@ -55,7 +55,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
      */
     public function findBy($attribute, $value, $columns = ['*'])
     {
-        return $this->renderJSON($this->model->where($attribute,$value)->get($columns));
+        return $this->model->where($attribute,$value)->get($columns);
     }
 
     /**
@@ -63,7 +63,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
      */
     public function findWhere(array $where, $columns = ['*'])
     {
-        return $this->renderJSON($this->model->where($where)->get($columns));
+        return $this->model->where($where)->get($columns);
     }
 
     /**
@@ -71,7 +71,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
      */
     public function findWhereIn($field, array $values, $columns = ['*'])
     {
-        return $this->renderJSON($this->model->whereIn($field,$values)->get($columns));
+        return $this->model->whereIn($field,$values)->get($columns);
     }
 
     /**
@@ -79,7 +79,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
      */
     public function findWhereNotIn($field, array $values, $columns = ['*'])
     {
-        return $this->renderJSON($this->model->whereNotIn($field,$values)->get($columns));
+        return $this->model->whereNotIn($field,$values)->get($columns);
     }
 
     /**
@@ -87,7 +87,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
      */
     public function first($columns = ['*'])
     {
-        return $this->renderJSON($this->model->first($columns));
+        return $this->model->first($columns);
     }
 
     /**
@@ -95,7 +95,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
      */
     public function firstOrNew(array $attributes = [])
     {
-       return $this->renderJSON($this->model->firstOrNew($attributes));
+       return $this->model->firstOrNew($attributes);
     }
 
     /**
@@ -103,7 +103,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
      */
     public function firstOrCreate(array $attributes = [])
     {
-        return $this->renderJSON($this->model->firstOrCreate($attributes));
+        return $this->model->firstOrCreate($attributes);
     }
 
     /**
@@ -111,7 +111,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
      */
     public function create(array $attributes)
     {
-        return $this->renderJSON($this->model->save($attributes));
+        return $this->model->save($attributes);
     }
 
     /**
@@ -119,7 +119,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
      */
     public function update(array $attributes, $id)
     {
-        return $this->renderJSON($this->model->find($id)->update($attributes));
+        return $this->model->find($id)->update($attributes);
     }
 
     /**
@@ -127,7 +127,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
      */
     public function delete($id)
     {
-        return $this->renderJSON($this->model->delete($id));
+        return $this->model->delete($id);
     }
 
 
@@ -167,14 +167,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
         return $this;
     }
 
-    public function renderJSON($data)
-    {
-//          if($this->isJson($data))
-//              return $data;
-//          else
-//              return json_encode($data);
-
-//        return response()->json($data);
+    public function renderJSON($data){
         return $data;
     }
 

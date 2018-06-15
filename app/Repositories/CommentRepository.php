@@ -23,13 +23,13 @@ class CommentRepository extends BaseRepository implements CommentRepositoryInter
     public function getCommentByUser($id): Collection
     {
         $result=$this->model()->with('user')->where('user_id',$id)->get();
-        return $this->renderJSON($result);
+        return$result;
     }
 
     public function getCommentByActionItem($id): Collection
     {
         $result=$this->model()->with('user')->where('action_item_id',$id)->get();
-        return $this->renderJSON($result);
+        return $result;
     }
 
     //incomplete, complete the project model first
@@ -37,7 +37,7 @@ class CommentRepository extends BaseRepository implements CommentRepositoryInter
     {
        $ids=$this->project()->find($id)->user()->pluck('id')->toArray();
        $result=$this->model()->whereIn('user_id',$ids)->get();
-       return $this->renderJSON($result);
+       return $result;
     }
 
 }
