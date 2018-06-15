@@ -17,15 +17,6 @@ class ActionItem extends Model
       'description'
     ];
 
-    protected $appends = [
-        'first_name',
-        'last_name',
-        'full_name',
-        'email',
-        'phone',
-        'avatar',
-    ];
-
     public function assignor()
     {
         return $this->belongsTo(User::class,'assignor_id','id'); //assignor can be admin or employee
