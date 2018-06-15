@@ -17,7 +17,7 @@ class KpiChart extends Model
     ];
 
     public function project(){
-        return $this->hasOne(Project::class);
+        return $this->belongsTo(Project::class,'project_id','id');
     }
 
     public function kpiData(){
