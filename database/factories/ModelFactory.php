@@ -1,7 +1,6 @@
 <?php
 
 use Faker\Generator as Faker;
-use Ramsey\Uuid\Uuid;
 use Carbon\Carbon;
 /*
 |--------------------------------------------------------------------------
@@ -14,10 +13,6 @@ use Carbon\Carbon;
 |
 */
 
-$uuid=Uuid::uuid5(Uuid::NAMESPACE_DNS, 'php.net');
-$uuid2=Uuid::uuid3(Uuid::NAMESPACE_DNS, 'php.net');
-$uuid3=Uuid::uuid4(Uuid::NAMESPACE_DNS, 'php.net');
-
 $factory->define(App\Models\ActionItem::class, function (Faker $faker) {
     return [
         'name'=>$faker->sentence,
@@ -26,13 +21,13 @@ $factory->define(App\Models\ActionItem::class, function (Faker $faker) {
         'lean_tool_id'=>rand(1,9),
         'board_id'=>rand(1,9),
         'assignor_id'=>1,
-        'position'=>$faker->unique()->randomDigit
+        'position'=>$faker->randomDigit
     ];
 });
 
 $factory->define(App\Models\ActionItemAssignee::class, function (Faker $faker) {
     return [
-        'use_id'=>$faker->date('Y-m-d','30'),
+        'use_id'=>$faker->randomDigit,
     ];
 });
 
@@ -65,8 +60,13 @@ $factory->define(App\Models\Checklist::class, function (Faker $faker) {
 });
 
 $factory->define(App\Models\Comment::class, function (Faker $faker) {
+    $id=$faker->randomDigit;
     return [
+        'action_item_id'=>$id,
+        'user_id'=>$faker->randomDigit,
         'comment'=>$faker->text('100'),
+        'commentable_type'=>'App/Models/ActionItem',
+        'commentable_id'=>$id,
     ];
 });
 
@@ -76,11 +76,11 @@ $factory->define(App\Models\Department::class, function (Faker $faker) {
     ];
 });
 
-$factory->define(App\Models\Device::class, function (Faker $faker) use($uuid,$uuid2,$uuid3) {
+$factory->define(App\Models\Device::class, function (Faker $faker) {
     return [
-        'uuid'=>$uuid->toString(),
-        'fcm_token'=>$uuid2->toString(),
-        'api_token'=>$uuid3->toString(),
+        'uuid'=>$faker->uuid,
+        'fcm_token'=>$faker->md5,
+        'api_token'=>$faker->sha1,
     ];
 });
 
@@ -179,13 +179,15 @@ $factory->define(App\Models\QuizResult::class, function (Faker $faker) {
     $score=($correct/$quiz)*100;
 
     return [
+        'lean_tool_id'=>$faker->randomDigit,
+        'user_id'=>$faker->randomDigit,
         'score'=>$score,
         'correct'=>$correct,
-        'incorrenct'=>$incorrect
+        'incorrect'=>$incorrect
     ];
 });
 
-$factory->define(App\Models\User::class, function (Faker $faker) use($uuid) {
+$factory->define(App\Models\User::class, function (Faker $faker) {
     return [
         'first_name'=>$faker->firstName,
         'last_name'=>$faker->lastName,
@@ -193,6 +195,13 @@ $factory->define(App\Models\User::class, function (Faker $faker) use($uuid) {
         'phone'=>$faker->phoneNumber,
         'avatar'=>$faker->imageUrl(480,480),
         'password'=>'secret',
-        'verification_token'=>$uuid->toString(),
+        'verification_token'=>$faker->uuid,
     ];
 });
+
+//$factory->define(App\Models\Media::class, function (Faker $faker) {
+//    return [
+//        'name'=>$faker->image(),
+//        'full_name'=>$faker->
+//    ];
+//});
