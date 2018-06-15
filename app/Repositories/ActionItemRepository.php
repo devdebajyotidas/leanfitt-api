@@ -19,8 +19,8 @@ class ActionItemRepository extends BaseRepository implements ActionItemRepositor
 
     public function getAllActionItems(): Collection
     {
-        $result=$this->model()->with(['board','assignor','tool'])->get();
-        return $result;
+        $result=$this->model()->with(['board','assignor','tool','member'])->withCount('comment')->get();
+        return $this->formatData($result,'non_board');
     }
 
 
@@ -57,5 +57,34 @@ class ActionItemRepository extends BaseRepository implements ActionItemRepositor
     public function getActionItemDetails($item): Collection
     {
         // TODO: Implement getActionItemDetails() method.
+    }
+
+    /*External function*/
+
+    function formatData($result,$type){
+        return $result;
+        $data=$result->map(function($item) use($type){
+            $arr= [
+                'tool_id'=>$item['lean_tool_id'],
+                'title'=>$item['name'],
+                'assignor_id'=>$item['assignor']['id'],
+                'assignor_name'=>$item['assignor']['first_name'].' '.$item['assignor']['last_name'],
+                'assignor_avatar'=>$item['assignor']['avatar'],
+                'tool_name'=>$item['tool']['name'],
+                'tool_id'=>$item['tool']['id'],
+                'comment'=>$item['comment_count'],
+                'assignees'=>$item['member']
+            ];
+
+            if($type=='non_board') {
+                $arr_merged = array_merge($arr, ['board_name' => $item['board']['name'], 'board_id' => $item['board']['id']]);
+                return $arr_merged;
+            }
+
+            return $arr;
+        });
+
+        return $data;
+
     }
 }
