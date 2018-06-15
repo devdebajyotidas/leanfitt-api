@@ -26,12 +26,16 @@ class ActionItemRepository extends BaseRepository implements ActionItemRepositor
 
     public function getActionItemByTool($tool): Collection
     {
-        // TODO: Implement getActionItemByTool() method.
+        $result=$this->model()->with(['board','assignor','tool','member'])->withCount('comment')->where('lean_tool_id',$tool)->get();
+        return $this->formatData($result,'non_board');
     }
 
     public function getActionItemMembers($item): Collection
     {
-        // TODO: Implement getAllMemberFromAI() method.
+        $result=$this->model()->with(['member'])->find($item);
+        return $result->map(function($item){
+            return ['members'=>$item['member']];
+        });
     }
 
     public function getActionItemByProjects($item, $project): Collection
@@ -62,7 +66,6 @@ class ActionItemRepository extends BaseRepository implements ActionItemRepositor
     /*External function*/
 
     function formatData($result,$type){
-        return $result;
         $data=$result->map(function($item) use($type){
             $arr= [
                 'tool_id'=>$item['lean_tool_id'],
@@ -73,18 +76,17 @@ class ActionItemRepository extends BaseRepository implements ActionItemRepositor
                 'tool_name'=>$item['tool']['name'],
                 'tool_id'=>$item['tool']['id'],
                 'comment'=>$item['comment_count'],
-                'assignees'=>$item['member']
+                'assignees'=>$item['member']->map(function($member){
+                    return['full_name'=>$member['full_name'],'avatar'=>$member['avatar']];
+                }),
             ];
 
             if($type=='non_board') {
                 $arr_merged = array_merge($arr, ['board_name' => $item['board']['name'], 'board_id' => $item['board']['id']]);
                 return $arr_merged;
             }
-
             return $arr;
         });
-
         return $data;
-
     }
 }
