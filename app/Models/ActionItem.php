@@ -27,7 +27,7 @@ class ActionItem extends Model
     }
 
     public function tool(){
-        return $this->belongsTo(LeanTool::class);
+        return $this->belongsTo(LeanTool::class,'lean_tool_id','id');
     }
 
     public function checklist(){
