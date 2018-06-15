@@ -34,13 +34,7 @@ interface ActionItemRepositoryInterface
      * @param int | ActionItem $item
      * @return Collection
      */
-     public function getAllMemberFromAI($item):Collection;
-
-    /**
-     * @param int | ActionItem $item
-     * @return Collection
-     */
-     public function getAllDepartmentFromAI($item):Collection;
+     public function getActionItemMembers($item):Collection;
 
     /**
      * @param int | ActionItem $item
