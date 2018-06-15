@@ -19,13 +19,13 @@ class ActionItemRepository extends BaseRepository implements ActionItemRepositor
 
     public function getAllActionItems(): Collection
     {
-       $result=$this->model()->with(['tool','board','assignor']);
+       $result=$this->model()->with(['tool','board','assignor'])->get();
+//       $data=$result->map(function($item){
+//
+//       });
+        return $result;
     }
 
-    public function getActionItemDetails($item): Collection
-    {
-        // TODO: Implement getActionItemDetails() method.
-    }
 
     public function getActionItemByTool($tool): Collection
     {
@@ -57,4 +57,8 @@ class ActionItemRepository extends BaseRepository implements ActionItemRepositor
         // TODO: Implement getActionItemByDepartment() method.
     }
 
+    public function getActionItemDetails($item): Collection
+    {
+        // TODO: Implement getActionItemDetails() method.
+    }
 }
