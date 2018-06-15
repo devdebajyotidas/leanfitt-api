@@ -26,7 +26,7 @@ class ActionItem extends Model
         'avatar',
     ];
 
-    public function user()
+    public function assignor()
     {
         return $this->belongsTo(User::class,'id','assignor_id'); //assignor can be admin or employee
     }
