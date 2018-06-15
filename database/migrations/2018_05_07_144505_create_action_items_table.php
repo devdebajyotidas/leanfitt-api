@@ -18,6 +18,7 @@ class CreateActionItemsTable extends Migration
             $table->string('name');
             $table->integer('lean_tool_id');
             $table->integer('board_id');
+            $table->integer('project_id');
             $table->integer('assignor_id');
             $table->integer('position');
             $table->date('due_date');

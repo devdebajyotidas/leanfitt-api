@@ -54,4 +54,12 @@ class ActionItem extends Model
     public function comment(){
         return $this->hasMany(Comment::class);
     }
+
+    public function project(){
+        return $this->belongsTo(Project::class);
+    }
+
+    public function member(){
+        return $this->hasMany(ActionItemAssignee::class);
+    }
 }

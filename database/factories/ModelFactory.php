@@ -3,7 +3,6 @@
 use Faker\Generator as Faker;
 use Ramsey\Uuid\Uuid;
 use Carbon\Carbon;
-use Faker\Provider\en_Us\Company as Company;
 /*
 |--------------------------------------------------------------------------
 | Model Factories
@@ -15,11 +14,25 @@ use Faker\Provider\en_Us\Company as Company;
 |
 */
 
+$uuid=Uuid::uuid5(Uuid::NAMESPACE_DNS, 'php.net');
+$uuid2=Uuid::uuid3(Uuid::NAMESPACE_DNS, 'php.net');
+$uuid3=Uuid::uuid4(Uuid::NAMESPACE_DNS, 'php.net');
 
 $factory->define(App\Models\ActionItem::class, function (Faker $faker) {
     return [
+        'name'=>$faker->sentence,
         'description'=>$faker->text(50),
-        'due_date'=>$faker->date('Y-m-d','30'),
+        'due_date'=>Carbon::createFromTimeStamp($faker->dateTimeBetween('-30 days', '+30 days')->getTimestamp()),
+        'lean_tool_id'=>rand(1,9),
+        'board_id'=>rand(1,9),
+        'assignor_id'=>1,
+        'position'=>$faker->unique()->randomDigit
+    ];
+});
+
+$factory->define(App\Models\ActionItemAssignee::class, function (Faker $faker) {
+    return [
+        'use_id'=>$faker->date('Y-m-d','30'),
     ];
 });
 
@@ -31,9 +44,9 @@ $factory->define(App\Models\Attachment::class, function (Faker $faker) {
 
 $factory->define(App\Models\Award::class, function (Faker $faker){
     return [
-        'title' => $faker->sentence,
+        'title' => 'Award for quiz',
         'type' => 'quiz',
-        'description'=>$faker->paragraph
+        'description'=>$faker->sentence
     ];
 });
 
@@ -47,6 +60,7 @@ $factory->define(App\Models\Checklist::class, function (Faker $faker) {
     return [
         'label'=>$faker->sentence,
         'is_checked'=>rand(0,1),
+        'action_item_id'=>rand(1,10),
     ];
 });
 
@@ -56,24 +70,29 @@ $factory->define(App\Models\Comment::class, function (Faker $faker) {
     ];
 });
 
-$factory->define(App\Models\Department::class, function (Company $faker) {
+$factory->define(App\Models\Department::class, function (Faker $faker) {
     return [
-         'name'=>$faker->jobTitle(),
+         'name'=>$faker->jobTitle,
     ];
 });
 
-$factory->define(App\Models\Device::class, function (Faker $faker) {
+$factory->define(App\Models\Device::class, function (Faker $faker) use($uuid,$uuid2,$uuid3) {
     return [
-        'uuid'=>Uuid::uuid1()->toString(),
-        'fcm_token'=>Uuid::uuid1()->toString(),
-        'api_token'=>Uuid::uuid1()->toString(),
+        'uuid'=>$uuid->toString(),
+        'fcm_token'=>$uuid2->toString(),
+        'api_token'=>$uuid3->toString(),
     ];
 });
 
-$factory->define(App\Models\Employee::class, function (Company $faker) {
+$factory->define(App\Models\Employee::class, function (Faker $faker) {
     return [
-         'designation'=>$faker->jobTitle(),
+        'designation'=>$faker->jobTitle,
+        'user_id'=>rand(1,10)
     ];
+});
+
+$factory->define(App\Models\Admin::class, function (Faker $faker) {
+    return [];
 });
 
 $factory->define(App\Models\KpiChart::class, function (Faker $faker) {
@@ -97,15 +116,30 @@ $factory->define(App\Models\Label::class, function (Faker $faker) {
     return [
         'label'=>$faker->word,
         'color'=>$faker->hexColor,
+        'action_item_id'=>rand(1,10),
     ];
 });
 
 $factory->define(App\Models\LeanTool::class, function (Faker $faker) {
+    $quiz=array();
+    for ($i=0;$i<10;$i++){
+        $question=$faker->paragraph;
+        $answers=array();
+        $answer_type_arr=['true','false','false','false'];
+        for($j=0;$j<4;$j++){
+            $answer=$faker->paragraph;
+            $answer_type=$answer_type_arr[$j];
+            $answers[]=['answer'=>$answer,'type'=>$answer_type];
+        }
+        $content=$answers;
+        $quiz[]=['question'=>$question,'content'=>$content];
+    }
     return [
         'name'=>$faker->word,
         'overview'=>$faker->text(),
         'case_studies'=>$faker->text(),
-        'quiz'=>null,
+        'steps'=>$faker->text(),
+        'quiz'=>json_encode($quiz),
     ];
 });
 
@@ -119,10 +153,18 @@ $factory->define(App\Models\Organization::class, function (Faker $faker) {
     ];
 });
 
+$factory->define(App\Models\OrganizationAdmin::class, function (Faker $faker) {
+    return [
+        'admin_id'=>rand(1,10)
+    ];
+});
+
 $factory->define(App\Models\Project::class, function (Faker $faker) {
     return [
         'name'=>$faker->sentence,
         'goal'=>$faker->paragraph,
+        'lean_sensie'=>rand(1,10),
+        'leader'=>rand(1,10),
         'start_date'=>$startDate=Carbon::createFromTimeStamp($faker->dateTimeBetween('-30 days', '+30 days')->getTimestamp()),
         'end_date'=> Carbon::createFromFormat('Y-m-d H:i:s', $startDate)->addDays(30),
         'note'=>$faker->paragraph,
@@ -143,7 +185,7 @@ $factory->define(App\Models\QuizResult::class, function (Faker $faker) {
     ];
 });
 
-$factory->define(App\Models\User::class, function (Faker $faker) {
+$factory->define(App\Models\User::class, function (Faker $faker) use($uuid) {
     return [
         'first_name'=>$faker->firstName,
         'last_name'=>$faker->lastName,
@@ -151,6 +193,6 @@ $factory->define(App\Models\User::class, function (Faker $faker) {
         'phone'=>$faker->phoneNumber,
         'avatar'=>$faker->imageUrl(480,480),
         'password'=>'secret',
-        'verification_token'=>Uuid::uuid1()->toString(),
+        'verification_token'=>$uuid->toString(),
     ];
 });

@@ -19,6 +19,6 @@ class DatabaseSeeder extends Seeder
 //        if($admin){
 //            $admin->attachRole('admin');
 //        }
-        $this->call(AwardTableSeeder::class);
+        $this->call(ModelSeeder::class);
     }
 }

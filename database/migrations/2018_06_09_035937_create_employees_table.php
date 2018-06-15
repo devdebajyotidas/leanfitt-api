@@ -17,7 +17,6 @@ class CreateEmployeesTable extends Migration
             $table->increments('id');
             $table->integer('user_id');
             $table->integer('department_id');
-            $table->integer('organization_id')->nullable();
             $table->string('designation')->nullable();
             $table->tinyInteger('is_archived')->default(0);
         });
