@@ -12,4 +12,6 @@ interface DepartmentRepositoryInterface
      * @return Collection
      */
     public function getAllDepartmentsByOrganization($organization):Collection;
+
+    public function getAllDepartmentsByActionItem($item):Collection;
 }

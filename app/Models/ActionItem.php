@@ -17,18 +17,9 @@ class ActionItem extends Model
       'description'
     ];
 
-    protected $appends = [
-        'first_name',
-        'last_name',
-        'full_name',
-        'email',
-        'phone',
-        'avatar',
-    ];
-
-    public function user()
+    public function assignor()
     {
-        return $this->belongsTo(User::class,'id','assignor_id'); //assignor can be admin or employee
+        return $this->belongsTo(User::class,'assignor_id','id'); //assignor can be admin or employee
     }
 
     public function board(){
@@ -36,7 +27,7 @@ class ActionItem extends Model
     }
 
     public function tool(){
-        return $this->belongsTo(LeanTool::class);
+        return $this->belongsTo(LeanTool::class,'lean_tool_id','id');
     }
 
     public function checklist(){

@@ -34,13 +34,7 @@ interface ActionItemRepositoryInterface
      * @param int | ActionItem $item
      * @return Collection
      */
-     public function getAllMemberFromAI($item):Collection;
-
-    /**
-     * @param int | ActionItem $item
-     * @return Collection
-     */
-     public function getAllDepartmentFromAI($item):Collection;
+     public function getActionItemMembers($item):Collection;
 
     /**
      * @param int | ActionItem $item
@@ -56,14 +50,13 @@ interface ActionItemRepositoryInterface
      public function getActionItemByMember($user):Collection;
 
     /**
-     * @param int | ActionItem $item
-     * @param int | Department $department
+     * @param $department
      * @return Collection
      */
-     public function getActionItemByDepartment($item,$department):Collection;
+     public function getActionItemByDepartment($department):Collection;
 
     /**
-     * @param int|Board $board
+     * @param $board
      * @return Collection
      */
      public function getActionItemByBoard($board):Collection;

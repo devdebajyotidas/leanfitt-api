@@ -16,7 +16,7 @@ class LeantoolRepository extends BaseRepository implements LeanToolsRepositoryIn
 
     public function getToolDetailsByName($id, string $name): Collection
     {
-        $this->renderJSON($this->model()->find($id)->first($name));
+        return $this->model()->find($id)->first($name);
     }
 
 }
