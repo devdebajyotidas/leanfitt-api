@@ -28,6 +28,10 @@ class Project extends Model
     }
 
     public function kpi(){
-        return $this->belongsTo(KpiChart::class);
+        return $this->hasMany(KpiChart::class);
+    }
+
+    public function actionItem(){
+        return $this->hasMany(ActionItem::class);
     }
 }

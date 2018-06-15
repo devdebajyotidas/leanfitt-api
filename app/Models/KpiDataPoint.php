@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class KpiDataPoint extends Model
 {
     protected $fillable=[
-        'kpi_id',
+        'kpi_chart_id',
         'value',
         'target_date'
     ];
