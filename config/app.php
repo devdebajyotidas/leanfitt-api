@@ -212,5 +212,4 @@ return [
         'AWS' => Aws\Laravel\AwsFacade::class,
     ],
 
-    'faker_locale' => 'en_US'
 ];
