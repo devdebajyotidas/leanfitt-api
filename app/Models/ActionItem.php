@@ -28,7 +28,7 @@ class ActionItem extends Model
 
     public function assignor()
     {
-        return $this->belongsTo(User::class,'id','assignor_id'); //assignor can be admin or employee
+        return $this->belongsTo(User::class,'assignor_id','id'); //assignor can be admin or employee
     }
 
     public function board(){
