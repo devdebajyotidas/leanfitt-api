@@ -13,10 +13,14 @@ class ActionItemAssignee extends Model
        'user_id',
    ];
 
-   protected $appends=[
-       'full_name',
-       'avatar',
-   ];
+    protected $appends = [
+        'first_name',
+        'last_name',
+        'full_name',
+        'email',
+        'phone',
+        'avatar',
+    ];
 
    public function item(){
        return $this->belongsTo(ActionItem::class);
