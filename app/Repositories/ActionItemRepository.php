@@ -19,10 +19,7 @@ class ActionItemRepository extends BaseRepository implements ActionItemRepositor
 
     public function getAllActionItems(): Collection
     {
-       $result=$this->model()->with(['tool','board','assignor'])->get();
-//       $data=$result->map(function($item){
-//
-//       });
+        $result=$this->model()->with(['board','assignor','tool'])->get();
         return $result;
     }
 
