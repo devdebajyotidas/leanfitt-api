@@ -169,10 +169,13 @@ abstract class BaseRepository implements BaseRepositoryInterface
 
     public function renderJSON($data)
     {
-          if($this->isJson($data))
-              return $data;
-          else
-              return json_encode($data);
+//          if($this->isJson($data))
+//              return $data;
+//          else
+//              return json_encode($data);
+
+//        return response()->json($data);
+        return $data;
     }
 
     function isJson($data){
