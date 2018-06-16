@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\LeanTool;
 use App\Repositories\Contracts\QuizRepositoryInterface;
 use Illuminate\Support\Collection;
+use phpDocumentor\Reflection\Types\Mixed_;
 
 class QuizRepository extends BaseRepository implements QuizRepositoryInterface
 {
@@ -14,13 +15,9 @@ class QuizRepository extends BaseRepository implements QuizRepositoryInterface
         return new LeanTool();
     }
 
-    public function getAllQuizzes(): Collection
+    public function getQuizItems($tool)
     {
-        // TODO: Implement getAllQuizzes() method.
-    }
-
-    public function getQuizItems($tool): Collection
-    {
-        // TODO: Implement getQuizItems() method.
+        $result=$this->model()->find($tool);
+        return $result->quiz;
     }
 }

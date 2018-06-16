@@ -10,13 +10,7 @@ interface QuizRepositoryInterface
 {
 
     /**
-     * @return Collection
-     */
-    public function getAllQuizzes():Collection;
-
-    /**
      * @param int|LeanTool $tool
-     * @return Collection
      */
-    public function getQuizItems($tool):Collection;
+    public function getQuizItems($tool);
 }
