@@ -33,4 +33,8 @@ class Organization extends Model
     public function organizationAdmin(){
         return $this->hasOne(OrganizationAdmin::class);
     }
+
+    public function project(){
+        return $this->hasMany(Project::class);
+    }
 }

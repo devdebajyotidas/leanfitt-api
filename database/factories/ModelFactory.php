@@ -162,6 +162,7 @@ $factory->define(App\Models\OrganizationAdmin::class, function (Faker $faker) {
 
 $factory->define(App\Models\Project::class, function (Faker $faker) {
     return [
+        'organization_id'=>$faker->randomDigit,
         'name'=>$faker->sentence,
         'goal'=>$faker->paragraph,
         'lean_sensie'=>rand(1,10),
