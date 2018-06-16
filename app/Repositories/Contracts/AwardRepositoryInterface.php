@@ -10,11 +10,6 @@ interface AwardRepositoryInterface
 {
 
     /**
-     * @return Collection
-     */
-    public function getAllAwards():Collection;
-
-    /**
      * @param int|User $user
      * @return Collection
      */

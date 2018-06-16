@@ -37,11 +37,10 @@ interface ActionItemRepositoryInterface
      public function getActionItemMembers($item):Collection;
 
     /**
-     * @param int | ActionItem $item
      * @param int | Project $project
      * @return Collection
      */
-     public function getActionItemByProjects($item,$project):Collection;
+     public function getActionItemByProjects($project):Collection;
 
     /**
      * @param int | User $user

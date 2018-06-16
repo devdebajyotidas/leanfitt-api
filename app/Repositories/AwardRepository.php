@@ -14,14 +14,9 @@ class AwardRepository extends BaseRepository implements AwardRepositoryInterface
         return new Award();
     }
 
-    public function getAllAwards(): Collection
-    {
-        // TODO: Implement getAllAwards() method.
-    }
-
     public function getAllAwardbyDepartment($department): Collection
     {
-        // TODO: Implement getAllAwardbyDepartment() method.
+
     }
 
     public function getAllAwardsByUser($user): Collection

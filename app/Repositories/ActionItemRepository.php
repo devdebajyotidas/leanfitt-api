@@ -3,6 +3,8 @@
 namespace App\Repositories;
 
 use App\Models\ActionItem;
+use App\Models\ActionItemAssignee;
+use App\Models\Project;
 use App\Repositories\Contracts\ActionItemRepositoryInterface;
 use Illuminate\Support\Collection;
 
@@ -17,10 +19,18 @@ class ActionItemRepository extends BaseRepository implements ActionItemRepositor
         return new ActionItem();
     }
 
+    private function project(){
+        return new Project();
+    }
+
+    private function assignee(){
+        return new ActionItemAssignee();
+    }
+
     public function getAllActionItems(): Collection
     {
         $result=$this->model()->with(['board','assignor','tool','member'])->withCount('comment')->get();
-        return $this->formatData($result,'non_board');
+        return $this->formatActionItem($result,'non_board');
     }
 
 
@@ -32,40 +42,47 @@ class ActionItemRepository extends BaseRepository implements ActionItemRepositor
 
     public function getActionItemMembers($item): Collection
     {
-        $result=$this->model()->with(['member'])->find($item);
-        return $result->map(function($item){
-            return ['members'=>$item['member']];
+        $result=$this->model()->find($item)->member;
+        $data= $result->map(function($item){
+            return ['user_id'=>$item['user']['id'],'name'=>$item['user']['full_name'],'avatar'=>$item['user']['avatar']];
         });
+        return $data;
     }
 
-    public function getActionItemByProjects($item, $project): Collection
+    public function getActionItemByProjects($project): Collection
     {
-        // TODO: Implement getActionItemByProjects() method.
+        $ids=$this->project()->find($project)->actionItem()->pluck('id')->toArray();
+        $result=$this->model()->with(['board','assignor','tool','member'])->withCount('comment')->whereIn('id',$ids)->get();
+        return $this->formatActionItem($result,'non_board');
     }
 
     public function getActionItemByMember($user): Collection
     {
-        // TODO: Implement getActionItemByMember() method.
+        $ids=$this->assignee()->where('user_id',$user)->pluck('action_item_id')->toArray();
+        $result=$this->model()->with(['board','assignor','tool','member'])->withCount('comment')->whereIn('id',$ids)->get();
+        return $this->formatActionItem($result,'non_board');
     }
 
     public function getActionItemByBoard($board): Collection
     {
-        // TODO: Implement getActionItemByBoard() method.
+        $result=$this->model()->with(['board','assignor','tool','member'])->withCount('comment')->where('board_id',$board)->get();
+        return $this->formatData($result,'board');
     }
 
     public function getActionItemByDepartment($department): Collection
     {
-        // TODO: Implement getActionItemByDepartment() method.
+        /*Dont think it is required currently, as the project dont have departments*/
     }
 
     public function getActionItemDetails($item): Collection
     {
-        // TODO: Implement getActionItemDetails() method.
+        $result=$this->model()->with(['board','assignor','member','comment'])->find($item);
+        return new Collection($result);
     }
 
-    /*External function*/
+    /*Additional functions*/
 
-    function formatData($result,$type){
+    protected function formatActionItem($result,$type){
         $data=$result->map(function($item) use($type){
             $arr= [
                 'tool_id'=>$item['lean_tool_id'],

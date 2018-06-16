@@ -183,4 +183,5 @@ abstract class BaseRepository implements BaseRepositoryInterface
        else
            return array($data);
     }
+
 }
