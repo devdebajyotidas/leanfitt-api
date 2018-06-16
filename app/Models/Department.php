@@ -8,6 +8,7 @@ class Department extends Model
 {
     protected $fillable = [
         'name',
+        'organization_id',
         'is_archived'
     ];
 
