@@ -16,7 +16,8 @@ class AwardRepository extends BaseRepository implements AwardRepositoryInterface
 
     public function getAllAwardbyDepartment($department): Collection
     {
-
+         $results=$this->model()->all();
+         return new Collection($results);
     }
 
     public function getAllAwardsByUser($user): Collection
