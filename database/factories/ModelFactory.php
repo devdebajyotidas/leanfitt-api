@@ -39,6 +39,7 @@ $factory->define(App\Models\Attachment::class, function (Faker $faker) {
 
 $factory->define(App\Models\Award::class, function (Faker $faker){
     return [
+        'user_id'=>$faker->randomDigit,
         'title' => 'Award for quiz',
         'type' => 'quiz',
         'description'=>$faker->sentence

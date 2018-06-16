@@ -91,4 +91,7 @@ class User extends Authenticatable
         return $this->belongsTo(Project::class);
     }
 
+    public function award(){
+        return $this->hasMany(Award::class);
+    }
 }
