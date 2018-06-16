@@ -9,8 +9,11 @@ use Illuminate\Support\Collection;
 interface QuizRepositoryInterface
 {
 
+    public function getAllQuiz($user):Collection;
+
     /**
      * @param int|LeanTool $tool
      */
     public function getQuizItems($tool);
+
 }

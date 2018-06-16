@@ -27,15 +27,13 @@ interface QuizResultRepositoryInterface
     public function getAllQuizTakenByUser($user):Collection;
 
     /**
-     * @param int|Organization $organization
      * @param int|Department $department
      * @return Collection
      */
-    public function getAllQuizTakenByDepartment($organization,$department):Collection;
+    public function getAllQuizTakenByDepartment($department):Collection;
 
     /**
      * @param int|QuizTaken $quizTaken
-     * @return float
      */
-    public function getQuizResult($quizTaken):float;
+    public function getQuizResult($quizTaken);
 }

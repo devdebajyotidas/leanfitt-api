@@ -13,5 +13,7 @@ interface DepartmentRepositoryInterface
      */
     public function getAllDepartmentsByOrganization($organization):Collection;
 
-    public function getAllDepartmentsByActionItem($item):Collection;
+    public function getArchivedDepartmentByOrganization($organization):Collection;
+
+    public function getActiveDepartmentByOrganization($organization):Collection;
 }
