@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Project extends Model
 {
     protected $fillable=[
+        'organization_id',
         'name',
         'goal',
         'leader',
@@ -33,5 +34,9 @@ class Project extends Model
 
     public function actionItem(){
         return $this->hasMany(ActionItem::class);
+    }
+
+    public function organization(){
+        return $this->belongsTo(Organization::class);
     }
 }
