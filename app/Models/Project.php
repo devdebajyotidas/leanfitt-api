@@ -39,4 +39,8 @@ class Project extends Model
     public function organization(){
         return $this->belongsTo(Organization::class);
     }
+
+    public function activity(){
+        return $this->hasMany(ProjectActivity::class);
+    }
 }
