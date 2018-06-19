@@ -25,11 +25,13 @@ interface UserServiceInterface
 
     public function employees($organization_id);
 
-    public function archiveUser($id,$type); //type=user/employee
+    public function changeDepartment($request,$user_id);
 
-    public function restoreUser($id,$type); //type=user/employee
+    public function archiveUser($user_id,$type);
 
-    public function removeUser($id,$type); //type=user/employee
+    public function restoreUser($user_id,$type);
+
+    public function removeUser($user_id,$type);
 
     public function analytic($user_id);
 
