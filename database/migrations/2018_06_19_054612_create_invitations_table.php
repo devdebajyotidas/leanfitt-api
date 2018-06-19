@@ -16,6 +16,7 @@ class CreateInvitationsTable extends Migration
         Schema::create('invitations', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('organization_id');
+            $table->integer('department_id');
             $table->string('first_name');
             $table->string('last_name');
             $table->string('phone');
