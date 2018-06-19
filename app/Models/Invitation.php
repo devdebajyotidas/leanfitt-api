@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Invitation extends Model
 {
     protected $fillable=[
+        'organization_id',
         'first_name',
         'last_name',
         'email',
@@ -14,4 +15,8 @@ class Invitation extends Model
         'token',
         'is_joined'
     ];
+
+    public function organization(){
+        return $this->belongsTo(Organization::class);
+    }
 }
