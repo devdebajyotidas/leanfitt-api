@@ -99,7 +99,7 @@ class DepartmentService implements DepartmentServiceInterface
 
         $query=$this->departmentRepo->create($request->all());
         if($query){
-            $response->success=false;
+            $response->success=true;
             $response->message="New department has been added";
         }
         else{
@@ -122,7 +122,7 @@ class DepartmentService implements DepartmentServiceInterface
 
         $query=$this->departmentRepo->update($id,$request->all());
         if($query){
-            $response->success=false;
+            $response->success=true;
             $response->message="Department has been updated";
         }
         else{
@@ -133,16 +133,16 @@ class DepartmentService implements DepartmentServiceInterface
         return $response;
     }
 
-    public function archiveDepartment($id)
+    public function archiveDepartment($department_id)
     {
         $response=new \stdClass();
-        if(empty($id)){
+        if(empty($department_id)){
             $response->success=false;
             $response->message="Invalid department selection";
             return $response;
         }
 
-        $query=$this->departmentRepo->archive($id);
+        $query=$this->departmentRepo->archive($department_id);
         if($query){
             $response->success=true;
             $response->message='Department has been archived';
@@ -155,16 +155,16 @@ class DepartmentService implements DepartmentServiceInterface
         return $response;
     }
 
-    public function restoreDepartment($id)
+    public function restoreDepartment($department_id)
     {
         $response=new \stdClass();
-        if(empty($id)){
+        if(empty($department_id)){
             $response->success=false;
-            $response->message="Invalid department selection";
+            $response->message="Department id is required";
             return $response;
         }
 
-        $query=$this->departmentRepo->restore($id);
+        $query=$this->departmentRepo->restore($department_id);
         if($query){
             $response->success=true;
             $response->message='Department has been restored';
@@ -177,16 +177,16 @@ class DepartmentService implements DepartmentServiceInterface
         return $response;
     }
 
-    public function removeDepartment($id)
+    public function removeDepartment($department_id,$user_id)
     {
         $response=new \stdClass();
-        if(empty($id)){
+        if(empty($department_id)){
             $response->success=false;
             $response->message="Invalid department selection";
             return $response;
         }
 
-        $query=$this->departmentRepo->forceDelete($id);
+        $query=$this->departmentRepo->forceDelete($department_id);
         if($query){
             $response->success=true;
             $response->message='Department has been removed';

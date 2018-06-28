@@ -13,11 +13,11 @@ interface DepartmentServiceInterface
 
     public function addDepartment($request);
 
-    public function updateDepartment($request,$id);
+    public function updateDepartment($request,$department_id);
 
-    public function archiveDepartment($id);
+    public function archiveDepartment($department_id);
 
-    public function restoreDepartment($id);
+    public function restoreDepartment($department_id);
 
-    public function removeDepartment($id);
+    public function removeDepartment($department_id,$user_id);
 }

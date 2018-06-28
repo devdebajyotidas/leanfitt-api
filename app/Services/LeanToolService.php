@@ -114,6 +114,8 @@ class LeanToolService implements LeanToolServiceInterface
             $response->data=null;
             $response->message="Tool not found";
         }
+
+        return $response;
     }
 
     public function delete($tool_id, $user_id)

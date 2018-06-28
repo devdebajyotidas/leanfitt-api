@@ -69,6 +69,17 @@ class EmployeeController extends Controller
         }
     }
 
+    public function resendInvitation($invitation_id){
+        try{
+            $result=$this->service->resend($invitation_id);
+            return response()->json($result);
+        }catch(\Exception $e){
+            $response['success']=false;
+            $response['message']=$e->getMessage();
+            return response()->json($response);
+        }
+    }
+
     public function join(Request $request){
         try{
             $result=$this->service->join($request);

@@ -127,12 +127,17 @@ abstract class BaseRepository implements BaseRepositoryInterface
 
     public function archive($id)
     {
-        return $this->model->find($id)->udpate(['is_archived'=>1]);
+        $query=$this->model->find($id);
+        $query->is_archived=1;
+        return $query->update();
+
     }
 
     public function restore($id)
     {
-        return $this->model->find($id)->udpate(['is_archived'=>0]);
+        $query=$this->model->find($id);
+        $query->is_archived=0;
+        return $query->update();
     }
 
     public function forceDelete($id)

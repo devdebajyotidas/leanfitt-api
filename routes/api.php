@@ -48,9 +48,10 @@ Route::group(['namespace' => 'API'], function () {
     Route::post('employees/department/change', 'EmployeeController@changeDepartment');
     Route::get('employees/list', 'EmployeeController@list'); /*for multi purpose dropdown use department,orgnization*/
     Route::post('employees/invite', 'EmployeeController@invite');
+    Route::get('employees/invite/resend/{invitaion_id}', 'EmployeeController@resendInvitation');
     Route::post('employees/join', 'EmployeeController@join'); /*join invited*/
-    Route::post('employees/archive/{employee_id}', 'EmployeeController@archive');
-    Route::post('employees/restore/{employee_id}', 'EmployeeController@restore');
+    Route::get('employees/archive/{employee_id}', 'EmployeeController@archive');
+    Route::get('employees/restore/{employee_id}', 'EmployeeController@restore');
     Route::delete('employees/{employee_id}/{user_id}', 'EmployeeController@delete');
 
     Route::post('employees/subscribe/{employee_id}', 'EmployeeController@subscribe');
@@ -58,7 +59,7 @@ Route::group(['namespace' => 'API'], function () {
     /*Departments*/
     Route::get('departments', 'DepartmentController@index'); /*filter organization*/
     Route::get('departments/list', 'DepartmentController@list'); /*for multi purpose dropdown*/
-    Route::get('departments/{department_id}', 'DepartmentController@show');
+    Route::get('departments/show/{department_id}', 'DepartmentController@show');
     Route::post('departments', 'DepartmentController@create');
     Route::put('departments/{department_id}', 'DepartmentController@update');
     Route::get('departments/archive/{department_id}', 'DepartmentController@archive');
@@ -76,7 +77,7 @@ Route::group(['namespace' => 'API'], function () {
     Route::get('quiz/{user_id}', 'QuizController@index');
     Route::get('quiz/taken/list', 'QuizController@taken'); /*use filter for department and organization eg. url?department=1*/
     Route::get('quiz/take/{tool_id}/{user_id}', 'QuizController@show'); /*display with result, if result then display result page*/
-    Route::post('quiz', 'QuizController@create');;
+    Route::post('quiz/post/result', 'QuizController@create');;
 
     /*Action Items*/
     Route::get('items/{type}', 'ActionItemController@index'); /*use filter for department and organization eg. url?department=1&type=report*/

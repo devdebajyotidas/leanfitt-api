@@ -182,6 +182,11 @@ class QuizService implements QuizServiceInterface
                 $response->success=true;
                 $response->message="Quiz result has been saved";
             }
+            else{
+                DB::commit();
+                $response->success=true;
+                $response->message="Quiz result has been saved";
+            }
         }
         else{
             DB::rollBack();

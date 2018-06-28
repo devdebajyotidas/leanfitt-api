@@ -16,13 +16,14 @@ class EmployeeRepository extends BaseRepository implements EmployeeRepositoryInt
     {
         $query=$this->model()
             ->join('departments as dep','dep.id','=','employees.department_id')
-            ->select(['employees.*','dep.organization_id','dep.name as department_name']);
+            ->join('users as u','u.id','=','employees.user_id')
+            ->select(['employees.*','dep.organization_id','dep.name as department_name','u.first_name','u.last_name','u.email','u.phone','u.avatar']);
         return $query;
     }
 
     public function showEmployee($employee_id)
     {
-        $query=$this->model()->with(['department.organization','subscription'])->where('id',$employee_id)->first();
+        $query=$this->model()->with(['user','department.organization','subscription'])->where('id',$employee_id)->first();
         return $query;
     }
 

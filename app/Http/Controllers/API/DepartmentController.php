@@ -60,7 +60,7 @@ class DepartmentController extends Controller
 
     public function update(Request $request,$department_id){
         try{
-            $result=$this->service;
+            $result=$this->service->updateDepartment($request,$department_id);
             return response()->json($result);
         }catch(\Exception $e){
             $response['success']=false;
@@ -71,7 +71,7 @@ class DepartmentController extends Controller
 
     public function archive($department_id){
         try{
-            $result=$this->service;
+            $result=$this->service->archiveDepartment($department_id);
             return response()->json($result);
         }catch(\Exception $e){
             $response['success']=false;
@@ -82,7 +82,7 @@ class DepartmentController extends Controller
 
     public function restore($department_id){
         try{
-            $result=$this->service;
+            $result=$this->service->restoreDepartment($department_id);
             return response()->json($result);
         }catch(\Exception $e){
             $response['success']=false;
@@ -93,7 +93,7 @@ class DepartmentController extends Controller
 
     public function delete($department_id,$user_id){
         try{
-            $result=$this->service;
+            $result=$this->service->removeDepartment($department_id,$user_id);
             return response()->json($result);
         }catch(\Exception $e){
             $response['success']=false;

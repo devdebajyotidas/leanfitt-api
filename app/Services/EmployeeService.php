@@ -52,10 +52,10 @@ class EmployeeService implements EmployeeServiceInterface
                        "department_name"=> null,
                        "first_name"=> $item['first_name'],
                        "last_name"=> $item['last_name'],
-                       "full_name"=>$item['first_name']. " ".$item['last_name'],
                        "email"=> $item['email'],
                        "phone"=> $item['phone'],
                        "avatar"=> "https://ui-avatars.com/api/?name=".$item['first_name'],
+                       "invitaion_id"=>$item['id'],
                        "status"=> "Invited"
                      ];
                 });
@@ -123,19 +123,19 @@ class EmployeeService implements EmployeeServiceInterface
     public function formatEmployeeData($query){
         $data['user_id']=$query->user_id;
         $data['employee_id']=$query->id;
-        $data['first_name']=$query->first_name;
-        $data['last_name']=$query->last_name;
+        $data['first_name']=isset($query->user) ? $query->user->first_name : null;
+        $data['last_name']=isset($query->user) ? $query->user->last_name : null;
         $data['designation']=$query->designation;
-        $data['email']=$query->email;
-        $data['phone']=$query->phone;
-        $data['avatar']=$query->avatar;
+        $data['email']=isset($query->user) ? $query->user->email : null;
+        $data['phone']=isset($query->user) ? $query->user->phone : null;
+        $data['avatar']=isset($query->user) ? $query->user->avatar : null;
         $data['department_id']=isset($query->department) ? $query->department_id : null;
         $data['department_name']=isset($query->department) ? $query->department->name : null;
         $data['organization_id']=isset($query->department->organization) ? $query->department->organization->id : null;
         $data['organization_name']=isset($query->department->organization) ? $query->department->organization->name : null;
         $data['active_subscription']=isset($query->subscription) ? $query->subscription->is_active ==1 ? true : false : false;
         $data['is_archived']=$query->is_archived;
-        $data['created_at']=$query->created_at;
+        $data['created_at']=Carbon::parse($query->created_at)->format('Y-m-d H:i:s');
         return $data;
     }
 
@@ -192,7 +192,7 @@ class EmployeeService implements EmployeeServiceInterface
         $query=$query->where('employees.is_archived',0)->get();
 
         $data=$query->map(function($item){
-            return ['id'=>$item['id'],'full_name'=>$item['full_name']];
+            return ['id'=>$item['id'],'name'=>$item['first_name'].' '.$item['last_name']];
         });
 
         if($data->count() > 0){
@@ -256,10 +256,32 @@ class EmployeeService implements EmployeeServiceInterface
             Mail::to($request->get('email'))->send(new InvitationMail($data));
             DB::commit();
             $response->success=true;
-            $response->message="An user has been invited";
+            $response->message="A employee has been invited";
         }
         else{
             DB::rollBack();
+            $response->success=false;
+            $response->message="Something went wrong, try again later";
+        }
+
+        return $response;
+    }
+
+    public function resend($invitation_id){
+        $response=new \stdClass();
+        if(empty($invitation_id)){
+            $response->success=false;
+            $response->message="Invitation id is required";
+            return $response;
+        }
+
+        $invitation=$this->inviteRepo->find($invitation_id);
+        if($invitation){
+            Mail::to($invitation->email)->send(new InvitationMail($invitation->toArray()));
+            $response->success=true;
+            $response->message="Invitation has been sent";
+        }
+        else{
             $response->success=false;
             $response->message="Something went wrong, try again later";
         }
@@ -372,7 +394,7 @@ class EmployeeService implements EmployeeServiceInterface
             $update_user=$this->userRepo->update($employee->user_id,['is_archived'=>0]);
             if($update_user && $update_employee){
                 $response->success=true;
-                $response->message="Account has been archived";
+                $response->message="Account has been restored";
             }
             else{
                 $response->success=false;

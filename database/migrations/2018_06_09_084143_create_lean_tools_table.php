@@ -16,10 +16,10 @@ class CreateLeanToolsTable extends Migration
         Schema::create('lean_tools', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->longText('overview');
-            $table->longText('steps');
-            $table->longText('case_studies');
-            $table->longText('quiz');
+            $table->longText('overview')->nullable();
+            $table->longText('steps')->nullable();
+            $table->longText('case_studies')->nullable();
+            $table->longText('quiz')->nullable();
             $table->integer('created_by');
             $table->timestamps();
             $table->softDeletes();

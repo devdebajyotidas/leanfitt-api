@@ -15,6 +15,8 @@ interface EmployeeServiceInterface
 
     public function invite($request);
 
+    public function resend($invitation_id);
+
     public function join($request);
 
     public function archive($employee_id);

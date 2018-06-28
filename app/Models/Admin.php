@@ -7,21 +7,21 @@ use App\Traits\UserAttributes;
 
 class Admin extends Model
 {
-    use UserAttributes;
+//    use UserAttributes;
 
     protected $fillable = [
         'user_id',
         'is_superadmin',
     ];
 
-    protected $appends = [
-        'first_name',
-        'last_name',
-        'full_name',
-        'email',
-        'phone',
-        'avatar',
-    ];
+//    protected $appends = [
+//        'first_name',
+//        'last_name',
+//        'full_name',
+//        'email',
+//        'phone',
+//        'avatar',
+//    ];
 
     public function user()
     {
