@@ -22,23 +22,25 @@ Route::group(['namespace' => 'API'], function () {
     /*Auth Services*/
     Route::post('account/login', 'AuthController@login'); /*check subscription*/
     Route::post('account/recovery', 'AuthController@recovery');
+    Route::get('account/recovery/check/{code}', 'AuthController@checkResetCode');
     Route::post('account/switch', 'AuthController@switchAccount'); /*update session (role)*/
-    Route::post('password/update', 'AuthController@updatePassword');
+    Route::post('account/password/update', 'AuthController@updatePassword');
 
     /*User Services*/
     Route::post('account/signup', 'UserController@signup');
     Route::get('user/accounts/{user_id}', 'UserController@accounts'); //associated accounts for switch
     Route::get('user/profile/{user_id}', 'UserController@profile');
-    Route::post('user/profile/{user_id}', 'UserController@update');
-    Route::post('account/deactivate/{user_id}', 'UserController@deactivate');
+    Route::put('user/profile/{user_id}', 'UserController@update');
+    Route::get('account/deactivate/{user_id}', 'UserController@deactivate');
     Route::post('account/join/employee', 'UserController@joinEmployee'); /*if admin and want to join as employee*/
 
     /*Organization*/
     Route::get('organizations', 'OrganizationController@index');
-    Route::put('organizations/{organization_id}', 'OrganizationController@update');
-    Route::get('organizations/list', 'OrganizationController@list'); /*for multi purpose dropdown*/
     Route::get('organizations/{organization_id}', 'OrganizationController@show');
+    Route::put('organizations/{organization_id}', 'OrganizationController@update');
+    Route::get('organizations/list/all', 'OrganizationController@list'); /*for multi purpose dropdown*/
     Route::delete('organizations/{organization_id}/{user_id}', 'OrganizationController@delete');
+    Route::post('organizations/admin/change', 'OrganizationController@changeAdmin');
 
     /*Employee*/
     Route::get('employees', 'EmployeeController@index'); /*organization,department*/

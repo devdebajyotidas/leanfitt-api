@@ -36,6 +36,17 @@ class AuthController extends Controller
         }
     }
 
+    public function checkResetCode($code){
+        try{
+            $result=$this->service->checkResetCode($code);
+            return response()->json($result);
+        }catch(\Exception $e){
+            $response['success']=false;
+            $response['message']=$e->getMessage();
+            return response()->json($response);
+        }
+    }
+
     public function switchAccount(Request $request){
         try{
             $result=$this->service->switchAccount($request);
@@ -49,7 +60,7 @@ class AuthController extends Controller
 
     public function updatePassword(Request $request){
         try{
-            $result=$this->service;
+            $result=$this->service->updatePassword($request);
             return response()->json($result);
         }catch(\Exception $e){
             $response['success']=false;

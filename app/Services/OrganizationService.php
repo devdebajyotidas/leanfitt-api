@@ -125,20 +125,20 @@ class OrganizationService implements OrganizationServiceInterface
         $response=new \stdClass();
         if(empty($org)){
             $response->success=false;
-            $response->message="Invalid organization selection";
+            $response->message="organization_id is required";
             return $response;
         }
 
         if(empty($employee_id)){
             $response->success=false;
-            $response->message="Please select an employee";
+            $response->message="employee_id is required";
             return $response;
         }
 
         DB::beginTransaction();
         $user_id=$this->adminRepo->getUser($employee_id,'employee');
         $admin=$this->adminRepo->where('user_id',$user_id)->first();
-        if($admin->count() > 0){
+        if(count($admin) > 0){
             $query=$this->orgAdminRepo->where('organization_id',$org)->first()->update(['admin_id'=>$admin->id]);
         }
         else{

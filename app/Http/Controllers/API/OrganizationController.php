@@ -59,7 +59,9 @@ class OrganizationController extends Controller
         }
     }
 
-    public function changeAdmin($organization_id,$employee_id){
+    public function changeAdmin(Request $request){
+        $organization_id=$request->get('organization_id');
+        $employee_id=$request->get('employee_id');
         try{
             $result=$this->service->changeAdmin($employee_id,$organization_id);
             return response()->json($result);

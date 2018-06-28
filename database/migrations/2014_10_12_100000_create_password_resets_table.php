@@ -17,7 +17,7 @@ class CreatePasswordResetsTable extends Migration
             $table->integer('user_id');
             $table->string('email');
             $table->string('token');
-            $table->integer('code')->nullable();
+            $table->string('code')->nullable();
             $table->string('request_id')->nullable();
             $table->timestamps();
         });

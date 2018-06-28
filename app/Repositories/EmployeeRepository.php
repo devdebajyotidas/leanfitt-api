@@ -29,6 +29,6 @@ class EmployeeRepository extends BaseRepository implements EmployeeRepositoryInt
     public function checkEmployee($user,$organization=null)
     {
         $query= $this->model()->where('user_id',$user)->with('department.organization')->first();
-        return isset($query->department->organization) ? $query->department->organization->toArray() : null;
+        return $query;
     }
 }

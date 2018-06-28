@@ -33,7 +33,7 @@ class OrganizationAdminRepository extends BaseRepository implements Organization
         if(!empty($organization)){
             $query=$query->where('o.id',$organization);
         }
-        return $query->select(['o.*','ad.is_superadmin'])->first();
+        return $query->select(['o.*','ad.is_superadmin','ad.id as admin_id'])->first();
     }
 
 }

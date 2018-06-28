@@ -54,6 +54,14 @@ class AuthService implements AuthServiceInterface
                 return $response;
             }
 
+            if($user->is_verified==0){
+                $response->success=false;
+                $response->data=null;
+                $response->message="Email address is not verified";
+                $response->redirect='verify';
+                return $response;
+            }
+
             if($user){
                 $user_data=$request->all();
                 $user_data['user_id']=$user->id;
@@ -62,7 +70,7 @@ class AuthService implements AuthServiceInterface
                 $data=array_merge($user->toArray(),$account);
 
                 $response->success=true;
-                $response->data=$data;
+                $response->data=collect($data)->except('verification_token');
                 $response->message="Successfully logged in";
                 $response->redirect='home';
             }
@@ -80,38 +88,56 @@ class AuthService implements AuthServiceInterface
     protected function updateDevice($request){
         $device=$this->deviceRepo->where('user_id',$request['user_id'])->where('uuid',$request['uuid'])->first();
         if($device){
-            $this->deviceRepo->fillUpdate($device,['fcm_token'=>$request['fcm_token'],'api_token'=>$request['api_token']]);
+            $this->deviceRepo->fillUpdate($device,['fcm_token'=>$request['fcm_token']]);
         }
         else{
             $this->deviceRepo->create($request);
         }
     }
 
-    public function defaultAccount($user_id,$organization=null){
+    public function defaultAccount($user_id,$organization=null,$role=null){
+        $admin_data=$employee_data=null;
         $admin=$this->orgAdminRepo->firstOrganizationByAdmin($user_id,$organization);
         if($admin){
-            $data= ['organization_name'=>$admin['name'],'organization_id'=>$admin['id'],'role'=>'admin','is_superadmin'=>$admin['is_superadmin']];
+            $admin_data= ['organization_name'=>$admin['name'],'organization_id'=>$admin['id'],'admin_id'=>$admin['admin_id'],'role'=>'admin','is_superadmin'=>$admin['is_superadmin']];
+        }
+
+        $employee=$this->employeeRepo->checkEmployee($user_id);
+        if(isset($employee['department']['organization']['id']) && !empty($organization)){
+            if($employee['department']['organization']['id']!=$organization){
+                $employee=null;
+            }
+        }
+        if($employee){
+            $employee_data['organization_name']=$employee['department']['organization']['name'];
+            $employee_data['organization_id']=$employee['department']['organization']['id'];
+            $employee_data['employee_id']=$employee['id'];
+            $employee_data['role']='employee';
+            $employee_data['is_superadmin']=0;
         }
         else{
-            $employee=$this->employeeRepo->checkEmployee($user_id);
-            if(isset($employee) && !empty($organization)){
-                if($employee['id']!=$organization){
-                    $employee=null;
-                }
-            }
-
-            if($employee){
-                $data['organization_name']=$employee['name'];
-                $data['organization_id']=$employee['id'];
-                $data['role']='employee';
-                $data['is_superadmin']=0;
-            }
-            else{
-                $data=null;
-            }
+            $employee_data=null;
         }
 
-        return $data;
+        if(!empty($role)){
+            if($role=='admin'){
+                return $admin_data;
+            }
+            elseif($role=='employee'){
+                return $employee_data;
+            }
+            else{
+                return null;
+            }
+        }
+        else{
+            if($admin){
+                return $admin_data;
+            }
+            else{
+                return $employee_data;
+            }
+        }
     }
 
     public function switchAccount($request)
@@ -120,22 +146,29 @@ class AuthService implements AuthServiceInterface
         if(empty($request->get('user_id'))){
             $response->success=false;
             $response->data=null;
-            $response->message='Invalid user selection';
+            $response->message='user_id is required';
             return $response;
         }
 
         if(empty($request->get('organization_id'))){
             $response->success=false;
             $response->data=null;
-            $response->message='Invalid organization selection';
+            $response->message='organization_id is required';
+            return $response;
+        }
+
+        if(empty($request->get('role'))){
+            $response->success=false;
+            $response->data=null;
+            $response->message='role is required';
             return $response;
         }
 
         $user=$this->repo->find($request->get('user_id'))->toArray();
-        $account=$this->defaultAccount($request->get('user_id'),$request->get('organization_id'));
-        $data=array_merge($user,$account);
+        $account=$this->defaultAccount($request->get('user_id'),$request->get('organization_id'),$request->get('role'));
 
-        if($account){
+        if($account && $user){
+            $data=array_merge($user,$account);
             $response->success=true;
             $response->data=$data;
             $response->message="Account available";
@@ -145,6 +178,8 @@ class AuthService implements AuthServiceInterface
             $response->data=null;
             $response->message="Account not available";
         }
+
+        return $response;
     }
 
     public function recovery($request)
@@ -183,45 +218,73 @@ class AuthService implements AuthServiceInterface
         return $response;
     }
 
-    public function updatePassword($request, $code)
-    {
+
+    public function checkResetCode($code){
         $response=new \stdClass();
         if(empty($code)){
             $response->success=false;
-            $response->message="Incorrect recovery code";
+            $response->data=null;
+            $response->message="Please enter the recovery code";
             return $response;
         }
 
         $recovery_log=$this->recoveryRepo->where('code',$code)->first();
-        if($recovery_log){
-            $account=$this->repo->find($recovery_log->user_id);
-
-            $validator=new UserValidator($request->all(),'update');
-            if($validator->fails()){
-                $response->success=false;
-                $response->message=$validator->messages()->first();
-                return $response;
-            }
-
+        if($recovery_log) {
+            $account = $this->repo->find($recovery_log->user_id);
             if($account){
-                $query=$this->repo->fillUpdate($account,$request->all());
-                if($query){
-                    $response->success=true;
-                    $response->message="Password has been updated";
-                }
-                else{
-                    $response->success=false;
-                    $response->message="Unable to update password";
-                }
+                $response->success=true;
+                $response->data=['user_id'=>$account->id];
+                $response->message="Account found";
             }
             else{
                 $response->success=false;
+                $response->data=null;
                 $response->message="Account not found";
             }
         }
         else{
+            $response->success=true;
+            $response->data=null;
+            $response->message="Invalid code";
+        }
+
+        return $response;
+    }
+
+
+    public function updatePassword($request)
+    {
+        $response=new \stdClass();
+        if(empty($request->get('user_id'))){
             $response->success=false;
-            $response->message="Incorrect recovery code";
+            $response->message="Invalid user id";
+            return $response;
+        }
+
+        $account=$this->repo->find($request->get('user_id'));
+
+        $validator=new UserValidator($request->all(),'update');
+        if($validator->fails()){
+            $response->success=false;
+            $response->message=$validator->messages()->first();
+            return $response;
+        }
+
+        if($account){
+            $data=$request->except('user_id');
+            $query=$this->repo->fillUpdate($account,$data);
+            if($query){
+                $response->success=true;
+                $response->message="Password has been updated";
+            }
+            else{
+                $response->success=false;
+                $response->message="Unable to update password";
+            }
+        }
+        else{
+            $response->success=false;
+            $response->message="Account not found";
         }
 
         return $response;

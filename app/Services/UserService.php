@@ -1,7 +1,9 @@
 <?php
 namespace App\Services;
 
+use App\Mail\VerificationMail;
 use App\Repositories\AdminRepository;
+use App\Repositories\DeviceRepository;
 use App\Repositories\EmployeeRepository;
 use App\Repositories\MediaRepository;
 use App\Repositories\OrganizationAdminRepository;
@@ -22,12 +24,14 @@ class UserService implements UserServiceInterface
     protected $orgAdminRepo;
     protected $organizationRepo;
     protected $mediaRepo;
+    protected $deviceRepo;
     public function __construct(UserRepository $userRepository,
                                 EmployeeRepository $employeeRepository,
                                 AdminRepository $adminRepository,
                                 OrganizationAdminRepository $organizationAdminRepository,
                                 OrganizationRepository $organizationRepository,
-                                MediaRepository $mediaRepository)
+                                MediaRepository $mediaRepository,
+                                DeviceRepository $deviceRepository)
     {
         $this->userRepo=$userRepository;
         $this->employeeRepo=$employeeRepository;
@@ -75,9 +79,10 @@ class UserService implements UserServiceInterface
             $org_data['admin_id']=$admin->id;
             $orgadmin=$this->orgAdminRepo->create($org_data);
             if($admin && $organization && $orgadmin){
+                Mail::to($user->email)->send(new VerificationMail($user->toArray()));
                 DB::commit();
                 $response->success=true;
-                $response->message="Successfully registered";
+                $response->message="An verification email has been sent";
             }
             else{
                 DB::rollBack();
@@ -110,8 +115,8 @@ class UserService implements UserServiceInterface
 
         $employee=$this->employeeRepo->checkEmployee($user_id);
         if($employee){
-            $data_employee['organization_name']=$employee['name'];
-            $data_employee['organization_id']=$employee['id'];
+            $data_employee['organization_name']=$employee['department']['organization']['name'];
+            $data_employee['organization_id']=$employee['department']['organization']['id'];
             $data_employee['role']='employee';
             $data=$data->push(new Collection($data_employee));
         }
@@ -187,6 +192,25 @@ class UserService implements UserServiceInterface
         }
 
         DB::beginTransaction();
+
+        if(!empty($request->get('email'))){
+            $email_exist=$this->userRepo->where('email',$request->email)->exists();
+            if($email_exist){
+                $response->success=false;
+                $response->message="The email address is associated with another account";
+                return $response;
+            }
+        }
+
+        if(!empty($request->get('phone'))){
+            $email_exist=$this->userRepo->where('phone',$request->phone)->exists();
+            if($email_exist){
+                $response->success=false;
+                $response->message="The phone number is associated with another account";
+                return $response;
+            }
+        }
+
         if($request->has('image') && $request->get('image') != null)
         {
             $file = $request->get('image');
