@@ -100,4 +100,8 @@ class User extends Authenticatable
         return $this->hasManyThrough(Award::class, Employee::class);
     }
 
+    public function projectActivity(){
+        return $this->hasMany(ProjectActivity::class);
+    }
+
 }

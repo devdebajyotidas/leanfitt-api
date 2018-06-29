@@ -17,13 +17,13 @@ class ProjectRepository extends BaseRepository implements ProjectRepositoryInter
 
     public function allProject()
     {
-        $query=$this->model()->with(['actionItem.member','leader','sensie']);
+        $query=$this->model()->with(['actionItem.member','leaderData','sensie'])->withCount('attachments')->withCount('comments');
         return $query;
     }
 
     public function getProject($project_id)
     {
-        $query=$this->model()->with(['actionItem.member.user','leaderData','sensie','activity','comments','attachments'])->where('id',$project_id)->first();
+        $query=$this->model()->with(['actionItem.member.user','leaderData','sensie','activity.user','comments.user','attachments'])->where('id',$project_id)->first();
         return $query;
     }
 

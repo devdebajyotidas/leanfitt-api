@@ -15,7 +15,7 @@ class KpiDataPointRepository extends BaseRepository implements KpiDataPointRepos
 
     public function filterDataPoint($start, $end,$kpi_id)
     {
-        $query=$this->model()->whereBetween('target_date',[$start,$end])->where('kpi_id',$kpi_id)->get();
+        $query=$this->model()->whereBetween('target_date',[$start,$end])->where('kpi_chart_id',$kpi_id)->get();
         return $query;
     }
 }

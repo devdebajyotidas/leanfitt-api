@@ -6,7 +6,12 @@ namespace App\Services;
 use App\Repositories\Contracts\AttachmentRepository;
 use App\Repositories\MediaRepository;
 use App\Services\Contracts\AttachmentServiceInterface;
+use App\Validators\AttachmentValidator;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Filesystem\FilesystemManager;
+use Spatie\Backup\Helpers\File;
 
 class AttachmentService implements AttachmentServiceInterface
 {
@@ -21,47 +26,63 @@ class AttachmentService implements AttachmentServiceInterface
 
     public function create($request)
     {
+        $fileSystem=new Filesystem();
+        $data=$request->all();
         $response=new \stdClass();
-        if(empty($request->get('created_by'))){
+        $validator=new AttachmentValidator($request->all(),'create');
+        if($validator->fails()){
             $response->success=false;
-            $response->message="user_id is required";
+            $response->message=$validator->messages()->first();
             return $response;
         }
 
-        $data=$request->all();
-        $data['created_by']=$request->user_id;
+        if(empty($request->file('file'))){
+            $response->success=false;
+            $response->message='file is required';
+            return $response;
+        }
 
-        if($request->has('image') && $request->get('image') != null)
-        {
-            DB::beginTransaction();
-            $file = $request->get('image');
-            $image_base64 = base64_decode($file);
-            $extension=$media['mime_type']=$file->getClientOriginalExtension();
-            $name =$media['file_name']= time() . rand(100,999) . $extension;
-            $path = public_path() . '/uploads/organization/' . $name;
-            $media['name']=url('/uploads/organization').'/'.$name;
-            if(file_put_contents($path, $image_base64)){
-                $this->mediaRepo->create($media);
-            }
-
-            $data['url']=url($media['name']);
-
-            $query=$this->attachmentRepo->create($data);
-            if($query){
-                DB::commit();
-                $response->success=true;
-                $response->message="Attachment has been added";
-            }
-            else{
-                DB::rollBack();
+        if($request->type=='project'){
+            if(empty($request->get('project_id'))){
                 $response->success=false;
-                $response->message="Something went wrong, try again later";
+                $response->message='project_id is required';
+                return $response;
             }
 
+            $data['attachable_type']='App\Models\Project';
+            $data['attachable_id']=$request->project_id;
         }
         else{
+            if(empty($request->get('action_item_id'))){
+                $response->success=false;
+                $response->message='action_item_id is required';
+                return $response;
+            }
+
+            $data['attachable_type']='App\Models\ActionItem';
+            $data['attachable_id']=$request->action_item_id;
+        }
+
+        DB::beginTransaction();
+        $file=$request->file('file');
+        $data['path']=$path=Storage::putFile('public/attachments',$file);
+        $data['url']=url(Storage::url($path));
+
+        $attachment=$this->attachmentRepo->create($data);
+        if($attachment){
+            $media['mime_type']=$fileSystem->mimeType($file);
+            $media['size']=$fileSystem->size($file);
+            $media['file_name']=basename($path);
+            $this->mediaRepo->create($media);
+
+            DB::commit();
+            $response->success=true;
+            $response->message="Attachment has been added";
+        }
+        else{
+            DB::rollBack();
             $response->success=false;
-            $response->message="No attachment found";
+            $response->message="Something went wrong, try again later";
         }
 
         return $response;
@@ -72,7 +93,7 @@ class AttachmentService implements AttachmentServiceInterface
         $response=new \stdClass();
         if(empty($attachment_id)){
             $response->success=false;
-            $response->message="Invalid attachment selection";
+            $response->message="attachment_id is required";
             return $response;
         }
 
@@ -82,30 +103,44 @@ class AttachmentService implements AttachmentServiceInterface
             return $response;
         }
 
-        DB::beginTransaction();
         $attachment=$this->attachmentRepo->find($attachment_id);
         if($attachment){
             if($attachment->created_by==$user_id || $this->attachmentRepo->isAdmin($user_id) || $this->attachmentRepo->isSuperAdmin($user_id)){
-                $query=$this->attachmentRepo->forceDeleteRecord($attachment);
-                if($query){
-                    DB::commit();
-                    $response->success=true;
-                    $response->message="Attachment has been removed";
+                $file_exists = Storage::disk('local')->exists($attachment->path);
+                if(!$file_exists){
+                    $response->success=false;
+                    $response->message="Attachment not found";
+                    return $response;
+                }
+
+                DB::beginTransaction();
+                $file_delete=Storage::disk('local')->delete($attachment->path);
+                if($file_delete){
+                    $query=$this->attachmentRepo->forceDeleteRecord($attachment);
+                    if($query){
+                        DB::commit();
+                        $response->success=true;
+                        $response->message="Attachment has been removed";
+                    }
+                    else{
+                        DB::rollBack();
+                        $response->success=false;
+                        $response->message="Something went wrong, try again later";
+                    }
                 }
                 else{
                     DB::rollBack();
                     $response->success=false;
                     $response->message="Something went wrong, try again later";
                 }
+
             }
             else{
-                DB::rollBack();
                 $response->success=false;
                 $response->message="You don't have enough permission to delete the attachment";
             }
         }
         else{
-            DB::rollBack();
             $response->success=false;
             $response->message="Attachment not found";
         }

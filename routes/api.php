@@ -85,21 +85,21 @@ Route::group(['namespace' => 'API'], function () {
     Route::post('items', 'ActionItemController@create');
     Route::put('items/{item_id}', 'ActionItemController@update');/*update any data name,due date,position,board*/
 
-    Route::post('item/member', 'ActionItemController@addAssignee'); /*item_id*/
-    Route::delete('item/comment/{item_id}/{assignee_id}/{user_id}', 'ActionItemController@removeAssignee');
+    Route::post('items/member', 'ActionItemController@addAssignee'); /*item_id*/
+    Route::delete('items/member/{item_id}/{assignee_id}/{user_id}', 'ActionItemController@removeAssignee');
 
-    Route::get('item/archive/{item_id}', 'ActionItemController@archive');
-    Route::get('item/restore/{item_id}', 'ActionItemController@restore');
-    Route::get('item/delete/{item_id}/{user_id}', 'ActionItemController@delete');
+    Route::get('items/archive/{item_id}', 'ActionItemController@archive');
+    Route::get('items/restore/{item_id}', 'ActionItemController@restore');
+    Route::get('items/delete/{item_id}/{user_id}', 'ActionItemController@delete');
 
     /*Comment*/
-    Route::post('comment', 'ActionItemController@create'); /*item_id*/
-    Route::put('comment/{comment_id}', 'ActionItemController@update');
-    Route::delete('comment/{comment_id}/{user_id}', 'ActionItemController@delete');
+    Route::post('comment', 'CommentController@create'); /*item_id*/
+    Route::put('comment/{comment_id}', 'CommentController@update');
+    Route::delete('comment/{comment_id}/{user_id}', 'CommentController@delete');
 
     /*Attachment*/
-    Route::post('attachment', 'ActionItemController@create'); /*item_id*/
-    Route::delete('attachment/{attachment_id}/{user_id}', 'ActionItemController@delete');
+    Route::post('attachment', 'AttachmentController@create'); /*item_id*/
+    Route::delete('attachment/{attachment_id}/{user_id}', 'AttachmentController@delete');
 
     /*Project*/
     Route::get('projects', 'ProjectController@index'); /*filter by organization*/

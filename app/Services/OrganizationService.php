@@ -8,6 +8,7 @@ use App\Repositories\OrganizationAdminRepository;
 use App\Repositories\OrganizationRepository;
 use App\Services\Contracts\OrganizationServiceInterface;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class OrganizationService implements OrganizationServiceInterface
 {
@@ -60,25 +61,19 @@ class OrganizationService implements OrganizationServiceInterface
         }
 
         DB::beginTransaction();
-        if($request->has('image') && $request->get('image') != null)
+        if($request->file('image') != null)
         {
-            $file = $request->get('image');
-            $image_base64 = base64_decode($file);
-            $extension=$media['mime_type']=$file->getClientOriginalExtension();
-            $name =$media['file_name']= time() . rand(100,999) . $extension;
-            $path = public_path() . '/uploads/organization/' . $name;
-            $media['name']=$featured_image=url('/uploads/organization').'/'.$name;
-            if(file_put_contents($path, $image_base64)){
-                $this->mediaRepo->create($media);
-            }
+            $file = $request->file('image');
+            $path=Storage::putFile('public/organizations/'.$org,$file);
+            $url=url(Storage::url($path));
         }
         else{
-            $featured_image=null;
+            $url=null;
         }
 
         $data=$request->all();
-        if(!empty($featured_image)){
-            $data['featured_image']=$featured_image;
+        if(!empty($url)){
+            $data['featured_image']=$url;
         }
         $query=$this->organiztionRepo->update($org,$data);
         if($query){

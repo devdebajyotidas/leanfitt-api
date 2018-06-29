@@ -15,7 +15,7 @@ interface ActionItemServiceInterface
 
    public function addAssignee($request);
 
-   public function removeAssignee($item_id,$assignee_id);
+   public function removeAssignee($item_id,$assignee_id,$user_id);
 
    public function archive($item_id);
 

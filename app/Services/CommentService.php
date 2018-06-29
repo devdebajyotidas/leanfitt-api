@@ -69,14 +69,14 @@ class CommentService implements CommentServiceInterface
    public function update($request, $comment_id)
    {
        $response=new \stdClass();;
-       if($comment_id){
+       if(empty($comment_id)){
            $response->success=false;
            $response->message="Invalid comment selection";
            return $response;
        }
 
        DB::beginTransaction();
-       $query=$this->itemRepo->update($comment_id,$request->all());
+       $query=$this->commentRepo->update($comment_id,$request->all());
        if($query){
            DB::commit();
            $response->success=true;
@@ -110,7 +110,7 @@ class CommentService implements CommentServiceInterface
        $comment=$this->commentRepo->find($comment_id);
        if($comment){
            if($comment->created_by==$user_id || $this->commentRepo->isAdmin($user_id) || $this->commentRepo->isSuperAdmin($user_id)){
-               $query=$this->commentRepo->deleteQuery($comment);
+               $query=$this->commentRepo->forceDeleteRecord($comment);
                if($query){
                    DB::commit();
                    $response->success=true;

@@ -6,6 +6,7 @@ use App\Repositories\ProjectActivityRepository;
 use App\Repositories\ProjectRepository;
 use App\Services\Contracts\ProjectServiceInterface;
 use App\Validators\ProjectValidator;
+use Carbon\Carbon;
 
 class ProjectService implements ProjectServiceInterface
 {
@@ -42,14 +43,19 @@ class ProjectService implements ProjectServiceInterface
                     'report_date'=>$item['report_date'],
                     'is_completed'=>$item['is_completed'],
                     'is_archived'=>$item['is_archived'],
-                    'leader'=>isset($item['leader']['id']) ? $item['leader']['id'] : null,
-                    'leader_name'=>isset($item['leader']['id']) ? $item['leader']['first_name'].' '.$item['leader']['last_name'] : null ,
-                    'sensie'=>isset($item['sensie']['id']) ? $item['sensie']['id'] : null,
-                    'sensie_name'=>isset($item['sensie']['id']) ? $item['sensie']['first_name'].' '.$item['sensie']['last_name'] : null,
+//                    'leader'=>isset($item['leaderData']['id']) ? $item['leaderData']['id'] : null,
+//                    'leader_name'=>isset($item['leaderData']['id']) ? $item['leaderData']['first_name'].' '.$item['leaderData']['last_name'] : null ,
+//                    'leader_avatar'=>isset($item['leaderData']['id']) ? $item['leaderData']['avatar']: null ,
+//                    'sensie'=>isset($item['sensie']['id']) ? $item['sensie']['id'] : null,
+//                    'sensie_name'=>isset($item['sensie']['id']) ? $item['sensie']['first_name'].' '.$item['sensie']['last_name'] : null,
+//                    'sensie_avatar'=>isset($item['sensie']['id']) ? $item['sensie']['avatar'] : null,
                     'item_count'=>count($item['actionItem']),
                     'member_count'=>$item['actionItem']->sum(function($ac){
                         return count($ac->member);
-                    })
+                    }),
+                    'comments_count'=>$item['comments_count'],
+                    'attachment_count'=>$item['attachments_count'],
+                    'created_at'=>Carbon::parse($item['created_at'])->format('Y-m-d H:i:s')
                 ];
             });
 
@@ -108,9 +114,28 @@ class ProjectService implements ProjectServiceInterface
                     return null;
                 }
             }) : null ;
-            $data['comments']=isset($query['comments']) ? $query['comments'] :null;
-            $data['attachments']=isset($query['attachments']) ? $query['attachments'] :null;
-            $data['activity']=isset($query['activity']) ? $query['activity'] :null;
+            $data['comments']=isset($query['comments']) ? $query['comments']->map(function($comment){
+                return [
+                    'id'=>$comment['id'],
+                    'commenter_id'=>isset($comment['user']['id']) ? $comment['user']['id'] : null,
+                    'commenter_name'=>isset($comment['user']['id']) ? $comment['user']['first_name'].' '.$comment['user']['last_name'] : null,
+                    'commenter_avatar'=>isset($comment['user']['id']) ? $comment['user']['avatar'] : null,
+                    'comment'=>$comment['comment'],
+                    'created_at'=>Carbon::parse($comment['created_at'])->format('Y-m-d H:i:s')
+                ];
+            }) :null;
+            $data['attachments']=isset($query['attachments']) ? $query['attachments']->map(function($atta){
+                return collect($atta)->except('path');
+            }) :null;
+            $data['activities']=isset($query['activity']) ? $query['activity']->map(function ($activity){
+                  return ['id'=>$activity['id'],
+                      'user_id'=>isset($activity['user']['id']) ? $activity['user']['id'] : null,
+                      'user_name'=>isset($activity['user']['id']) ? $activity['user']['first_name'].' '.$activity['user']['last_name'] : null,
+                      'user_avatar'=>isset($activity['user']['id']) ? $activity['user']['avatar'] : null,
+                      'log'=>$activity['log'],
+                      'created_at'=>Carbon::parse($activity['created_at'])->format('Y-m-d H:i:s')
+                  ];
+            }) :null;
 
 
             $response->success=true;
@@ -203,6 +228,8 @@ class ProjectService implements ProjectServiceInterface
             $response->success=false;
             $response->message="Something went wrong, try again later";
         }
+
+        return $response;
     }
 
     public function restore($project_id,$user_id)
@@ -229,6 +256,8 @@ class ProjectService implements ProjectServiceInterface
             $response->success=false;
             $response->message="Something went wrong, try again later";
         }
+
+        return $response;
     }
 
     public function complete($project_id,$user_id)
@@ -245,16 +274,32 @@ class ProjectService implements ProjectServiceInterface
             return $response;
         }
 
-        $query=$this->projectRepo->update($project_id,['is_completed'=>1]);
-        if($query){
-            $this->activityRepo->create(['added_by'=>$user_id,'project_id'=>$project_id,'log'=>'Project completed']);
-            $response->success=true;
-            $response->message="Project has been marked as completed";
+        $project=$this->projectRepo->find($project_id);
+        if($project){
+            if($project->is_archived==1){
+                $response->success=false;
+                $response->message="Can't complete a project which is archived";
+                return $response;
+            }
+
+            $update=$this->projectRepo->fillUpdate($project,['is_completed'=>1]);
+            if($update){
+                $this->activityRepo->create(['added_by'=>$user_id,'project_id'=>$project_id,'log'=>'Project completed']);
+                $response->success=true;
+                $response->message="Project has been marked as completed";
+            }
+            else{
+                $response->success=false;
+                $response->message="Something went wrong, try again later";
+            }
+
         }
         else{
             $response->success=false;
-            $response->message="Something went wrong, try again later";
+            $response->message="Project not found";
         }
+
+        return $response;
     }
 
     public function delete($project_id,$user_id)

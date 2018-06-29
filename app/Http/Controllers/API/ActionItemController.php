@@ -58,42 +58,9 @@ class ActionItemController extends Controller
         }
     }
 
-    public function addComment(Request $request){
-        try{
-            $result=$this->service;
-            return response()->json($result);
-        }catch(\Exception $e){
-            $response['success']=false;
-            $response['message']=$e->getMessage();
-            return response()->json($response);
-        }
-    }
-
-    public function updateComment(Request $request,$comment_id){
-        try{
-            $result=$this->service;
-            return response()->json($result);
-        }catch(\Exception $e){
-            $response['success']=false;
-            $response['message']=$e->getMessage();
-            return response()->json($response);
-        }
-    }
-
-    public function deleteComment($comment_id,$user_id){
-        try{
-            $result=$this->service;
-            return response()->json($result);
-        }catch(\Exception $e){
-            $response['success']=false;
-            $response['message']=$e->getMessage();
-            return response()->json($response);
-        }
-    }
-
     public function addAssignee(Request $request){
         try{
-            $result=$this->service;
+            $result=$this->service->addAssignee($request);
             return response()->json($result);
         }catch(\Exception $e){
             $response['success']=false;
@@ -102,31 +69,9 @@ class ActionItemController extends Controller
         }
     }
 
-    public function removeAssignee($item_id,$assignee_id){
+    public function removeAssignee($item_id,$assignee_id,$user_id){
         try{
-            $result=$this->service;
-            return response()->json($result);
-        }catch(\Exception $e){
-            $response['success']=false;
-            $response['message']=$e->getMessage();
-            return response()->json($response);
-        }
-    }
-
-    public function addAttachment(Request $request){
-        try{
-            $result=$this->service;
-            return response()->json($result);
-        }catch(\Exception $e){
-            $response['success']=false;
-            $response['message']=$e->getMessage();
-            return response()->json($response);
-        }
-    }
-
-    public function removeAttachment($attachment_id,$user_id){
-        try{
-            $result=$this->service;
+            $result=$this->service->removeAssignee($item_id,$assignee_id,$user_id);
             return response()->json($result);
         }catch(\Exception $e){
             $response['success']=false;
@@ -137,7 +82,7 @@ class ActionItemController extends Controller
 
     public function archive($item_id){
         try{
-            $result=$this->service;
+            $result=$this->service->archive($item_id);
             return response()->json($result);
         }catch(\Exception $e){
             $response['success']=false;
@@ -148,7 +93,7 @@ class ActionItemController extends Controller
 
     public function restore($item_id){
         try{
-            $result=$this->service;
+            $result=$this->service->restore($item_id);
             return response()->json($result);
         }catch(\Exception $e){
             $response['success']=false;
@@ -159,7 +104,7 @@ class ActionItemController extends Controller
 
     public function delete($item_id,$user_id){
         try{
-            $result=$this->service;
+            $result=$this->service->delete($item_id,$user_id);
             return response()->json($result);
         }catch(\Exception $e){
             $response['success']=false;

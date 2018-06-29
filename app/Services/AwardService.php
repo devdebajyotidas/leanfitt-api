@@ -16,9 +16,11 @@ class AwardService implements AwardServiceInterface
 
     public function allAwards($request)
     {
+        $response=new \stdClass();
         $department=$request->get('department');
         $organization=$request->get('organization');
         $employee=$request->get('employee');
+        $user=$request->get('user');
 
         $awards=$this->repo->getAwards();
 
@@ -34,6 +36,23 @@ class AwardService implements AwardServiceInterface
             $awards=$awards->where('employee_id',$employee);
         }
 
-        return $awards->orderby('created_at','desc')->get();
+        if(!empty($user)){
+            $awards=$awards->where('user_id',$user);
+        }
+
+        $data= $awards->orderby('created_at','desc')->get();
+
+        if(count($data) > 0){
+            $response->success=true;
+            $response->data=$data;
+            $response->message="Awards found";
+        }
+        else{
+            $response->success=false;
+            $response->data=null;
+            $response->message="No awards found";
+        }
+
+        return $response;
     }
 }

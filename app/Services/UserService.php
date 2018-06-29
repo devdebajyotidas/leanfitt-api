@@ -15,6 +15,7 @@ use App\Validators\UserValidator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class UserService implements UserServiceInterface
 {
@@ -191,8 +192,6 @@ class UserService implements UserServiceInterface
             return $response;
         }
 
-        DB::beginTransaction();
-
         if(!empty($request->get('email'))){
             $email_exist=$this->userRepo->where('email',$request->email)->exists();
             if($email_exist){
@@ -211,25 +210,20 @@ class UserService implements UserServiceInterface
             }
         }
 
-        if($request->has('image') && $request->get('image') != null)
+        DB::beginTransaction();
+        if($request->file('image') != null)
         {
-            $file = $request->get('image');
-            $image_base64 = base64_decode($file);
-            $extension=$media['mime_type']=$file->getClientOriginalExtension();
-            $name =$media['file_name']= time() . rand(100,999) . $extension;
-            $path = public_path() . '/uploads/profile/' . $name;
-            $media['name']=$featured_image=url('/uploads/profile').'/'.$name;
-            if(file_put_contents($path, $image_base64)){
-                $this->mediaRepo->create($media);
-            }
+            $file=$request->file('image');
+            $path=Storage::putFile('public/users/'.$user_id,$file);
+            $url=url(Storage::url($path));
         }
         else{
-            $featured_image=null;
+            $url=null;
         }
 
         $data=$request->all();
-        if(!empty($featured_image)){
-            $data['avatar']=$featured_image;
+        if(!empty($url)){
+            $data['avatar']=$url;
         }
 
         $query=$this->userRepo->update($user_id,$data);

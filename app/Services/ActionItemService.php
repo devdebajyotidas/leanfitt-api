@@ -24,15 +24,11 @@ class ActionItemService implements ActionItemServiceInterface
     protected $attachmentRepo;
     protected $mediaRepo;
     protected $commentRepo;
-    protected $deleteRepo;
-    protected $project_morph_type='App\Models\Project';
-    protected $report_morph_type='App\Models\Report';
     public function __construct(ActionItemAssigneeRepository $actionItemAssigneeRepository,
                                 ActionItemRepository $actionItemRepository,
                                 AttachmentRepository $attachmentRepository,
                                 CommentRepository $commentRepository,
-                                MediaRepository $mediaRepository,
-                                DeleteService $deleteRepo)
+                                MediaRepository $mediaRepository)
     {
         $this->itemRepo=$actionItemRepository;
         $this->assigneeRepo=$actionItemAssigneeRepository;
@@ -128,9 +124,9 @@ class ActionItemService implements ActionItemServiceInterface
                 return [
                     'id'=>$comment['id'],
                     'comment'=>$comment['comment'],
-                    'commentor_id'=>isset($comment['user']['id']) ? $comment['user']['id'] : null,
-                    'commentor_name'=>isset($comment['user']['id']) ? $comment['user']['first_name'] .' '.$comment['user']['last_name'] : null,
-                    'commentor_name'=>isset($comment['user']['id']) ? $comment['user']['avatar'] : null,
+                    'commenter_id'=>isset($comment['user']['id']) ? $comment['user']['id'] : null,
+                    'commenter_name'=>isset($comment['user']['id']) ? $comment['user']['first_name'] .' '.$comment['user']['last_name'] : null,
+                    'commenter_avatar'=>isset($comment['user']['id']) ? $comment['user']['avatar'] : null,
                     'created_at'=>Carbon::parse($comment['created_at'])->format('Y-m-d H:i:s')
                 ];
             }) : null;
@@ -171,7 +167,7 @@ class ActionItemService implements ActionItemServiceInterface
                 return $response;
             }
 
-            $data['itemable_type']=$this->project_morph_type;
+            $data['itemable_type']='App\Models\Project';
             $data['itemable_id']=$request->project_id;
         }
         else{
@@ -181,7 +177,7 @@ class ActionItemService implements ActionItemServiceInterface
                 return $response;
             }
 
-            $data['itemable_type']=$this->report_morph_type;
+            $data['itemable_type']='App\Models\Report';
             $data['itemable_id']=$request->report_id;
         }
 
@@ -204,7 +200,7 @@ class ActionItemService implements ActionItemServiceInterface
     public function update($request, $item_id)
     {
         $response=new \stdClass();;
-        if($item_id){
+        if(empty($item_id)){
             $response->success=false;
             $response->message="Please select an action item";
             return $response;
@@ -238,22 +234,32 @@ class ActionItemService implements ActionItemServiceInterface
         }
 
         DB::beginTransaction();
-        $query=$this->assigneeRepo->create($request->all());
-        if($query){
-            DB::commit();
-            $response->success=true;
-            $response->message="A member has been added";
+        $exist=$this->assigneeRepo->where('action_item_id',$request->action_item_id)->where('user_id',$request->user_id)->exists();
+
+        if($exist){
+            $response->success=false;
+            $response->message="The user is already member of this action item";
+            return $response;
         }
         else{
-            DB::rollBack();
-            $response->success=false;
-            $response->message="Something went wrong, try again later";
+            $query=$this->assigneeRepo->create($request->all());
+            if($query){
+                DB::commit();
+                $response->success=true;
+                $response->message="A member has been added";
+            }
+            else{
+                DB::rollBack();
+                $response->success=false;
+                $response->message="Something went wrong, try again later";
+            }
         }
+
 
         return $response;
     }
 
-    public function removeAssignee($item_id, $user_id)
+    public function removeAssignee($item_id,$assignee_id,$user_id)
     {
         $response=new \stdClass();
         if(empty($item_id)){
@@ -264,12 +270,18 @@ class ActionItemService implements ActionItemServiceInterface
 
         if(empty($user_id)){
             $response->success=false;
-            $response->message="user_id is required";
+            $response->message="current user_id is required";
+            return $response;
+        }
+
+        if(empty($assignee_id)){
+            $response->success=false;
+            $response->message="assignee_id is required";
             return $response;
         }
 
         DB::beginTransaction();
-        $assignee=$this->assigneeRepo->where('user_id',$user_id)->where('action_item_id',$item_id)->first();
+        $assignee=$this->assigneeRepo->where('user_id',$assignee_id)->where('action_item_id',$item_id)->first();
         if($assignee){
             if($assignee->user_id==$user_id || $this->assigneeRepo->isAdmin($user_id) || $this->assigneeRepo->isSuperAdmin($user_id)){
                 $query=$this->assigneeRepo->forceDeleteRecord($assignee);
@@ -287,13 +299,13 @@ class ActionItemService implements ActionItemServiceInterface
             else{
                 DB::rollBack();
                 $response->success=false;
-                $response->message="You don't have enough permission to delete the comment";
+                $response->message="You don't have enough permission to delete the assignee";
             }
         }
         else{
             DB::rollBack();
             $response->success=false;
-            $response->message="Member not found";
+            $response->message="Assignee not found";
         }
 
         return $response;
@@ -310,7 +322,7 @@ class ActionItemService implements ActionItemServiceInterface
         }
 
         DB::beginTransaction();
-        $query=$this->departmentRepo->restore($item_id);
+        $query=$this->itemRepo->restore($item_id);
         if($query){
             DB::commit();
             $response->success=true;
@@ -335,7 +347,7 @@ class ActionItemService implements ActionItemServiceInterface
         }
 
         DB::beginTransaction();
-        $query=$this->departmentRepo->restore($item_id);
+        $query=$this->itemRepo->restore($item_id);
         if($query){
             DB::commit();
             $response->success=true;
@@ -352,42 +364,42 @@ class ActionItemService implements ActionItemServiceInterface
 
     public function delete($item_id, $user_id)
     {
-        $response=new \stdClass();
-        if(empty($item_id)){
-            $response->success=false;
-            $response->message="Invalid comment selection";
-            return $response;
-        }
-
-        if(empty($user_id)){
-            $response->success=false;
-            $response->message="user_id is required";
-            return $response;
-        }
-
-        $item=$this->commentRepo->find($item_id);
-        if($item){
-            if($item->created_by==$user_id || $this->itemRepo->isAdmin($user_id) || $this->itemRepo->isSuperAdmin($user_id)){
-                $query=$this->deleteRepo->performDelete($item_id,'action_item');
-                if($query){
-                    $response->success=true;
-                    $response->message="Action item has been deleted";
-                }
-                else{
-                    $response->success=false;
-                    $response->message="Something went wrong, try again later";
-                }
-            }
-            else{
-                $response->success=false;
-                $response->message="You don't have enough permission to delete the action item";
-            }
-        }
-        else{
-            $response->success=false;
-            $response->message="Comment not found";
-        }
-
-        return $response;
+//        $response=new \stdClass();
+//        if(empty($item_id)){
+//            $response->success=false;
+//            $response->message="Invalid comment selection";
+//            return $response;
+//        }
+//
+//        if(empty($user_id)){
+//            $response->success=false;
+//            $response->message="user_id is required";
+//            return $response;
+//        }
+//
+//        $item=$this->commentRepo->find($item_id);
+//        if($item){
+//            if($item->created_by==$user_id || $this->itemRepo->isAdmin($user_id) || $this->itemRepo->isSuperAdmin($user_id)){
+//                $query=$this->deleteRepo->performDelete($item_id,'action_item');
+//                if($query){
+//                    $response->success=true;
+//                    $response->message="Action item has been deleted";
+//                }
+//                else{
+//                    $response->success=false;
+//                    $response->message="Something went wrong, try again later";
+//                }
+//            }
+//            else{
+//                $response->success=false;
+//                $response->message="You don't have enough permission to delete the action item";
+//            }
+//        }
+//        else{
+//            $response->success=false;
+//            $response->message="Comment not found";
+//        }
+//
+//        return $response;
     }
 }

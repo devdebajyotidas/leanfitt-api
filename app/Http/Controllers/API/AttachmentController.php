@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 
 use App\Services\AttachmentService;
+use Illuminate\Http\Request;
 
 class AttachmentController
 {
@@ -14,14 +15,16 @@ class AttachmentController
     }
 
     public function create(Request $request){
-        try{
-            $result=$this->service->create($request);
-            return response()->json($result);
-        }catch(\Exception $e){
-            $response['success']=false;
-            $response['message']=$e->getMessage();
-            return response()->json($response);
-        }
+        $result=$this->service->create($request);
+        return response()->json($result);
+//        try{
+//            $result=$this->service->create($request);
+//            return response()->json($result);
+//        }catch(\Exception $e){
+//            $response['success']=false;
+//            $response['message']=$e->getMessage();
+//            return response()->json($response);
+//        }
     }
 
     public function delete($attachment_id,$user_id){

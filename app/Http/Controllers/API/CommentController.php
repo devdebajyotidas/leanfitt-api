@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API;
 
 
 use App\Services\CommentService;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 
 class CommentController
 {

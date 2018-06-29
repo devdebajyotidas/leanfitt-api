@@ -13,8 +13,11 @@ class Attachment extends Model
     ];
 
     protected $fillable=[
+        'attachable_id',
+        'attachable_type',
         'url',
-        'created_by'
+        'path',
+        'created_by',
     ];
 
     public function attachable(){

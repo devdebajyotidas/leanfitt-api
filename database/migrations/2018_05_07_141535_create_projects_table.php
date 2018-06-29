@@ -22,8 +22,8 @@ class CreateProjectsTable extends Migration
             $table->integer('lean_sensie');
             $table->date('start_date');
             $table->date('end_date');
-            $table->text('note');
-            $table->date('report_date');
+            $table->text('note')->nullable();
+            $table->date('report_date')->nullable();
             $table->tinyInteger('is_archived')->default(0);
             $table->tinyInteger('is_completed')->default(0);
             $table->integer('created_by');

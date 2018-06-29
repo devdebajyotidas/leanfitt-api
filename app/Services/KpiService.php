@@ -9,6 +9,7 @@ use App\Services\Contracts\KpiServiceInterface;
 use App\Validators\KpiDataValidator;
 use App\Validators\KpiValidator;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class KpiService implements KpiServiceInterface
 {
@@ -117,13 +118,13 @@ class KpiService implements KpiServiceInterface
     public function update($request, $kpi_id)
     {
         $response=new \stdClass();
-        if(empty($kpi)){
+        if(empty($kpi_id)){
            $response->success=false;
            $response->message="Invalid kpi selection";
            return $response;
         }
 
-        $query=$this->kpiRepo->update($kpi,$request->all());
+        $query=$this->kpiRepo->update($kpi_id,$request->all());
 
         if($query){
             $response->success=true;
@@ -170,7 +171,7 @@ class KpiService implements KpiServiceInterface
         $response=new \stdClass();
         $start=$request->get('start');
         $end=$request->get('end');
-        $kpi_id=$request->get('kpi_id');
+        $kpi_id=$request->get('kpi_chart_id');
 
         if(empty($start) || empty($end)){
             $response->success=false;
@@ -220,7 +221,7 @@ class KpiService implements KpiServiceInterface
         $point=$this->kpiDataRepo->find($point_id);
         if($point){
             if($point->created_by==$user_id || $this->kpiDataRepo->isAdmin($user_id) || $this->kpiDataRepo->isSuperAdmin($user_id)){
-                $query=$this->kpiDataRepo->deleteQuery($point);
+                $query=$this->kpiDataRepo->forceDeleteRecord($point);
                 if($query){
                     DB::commit();
                     $response->success=true;

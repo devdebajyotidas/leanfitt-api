@@ -19,7 +19,9 @@ class ActionItem extends Model
         'due_date',
         'is_archived',
         'description',
-        'created_by'
+        'created_by',
+        'itemable_id',
+        'itemable_type',
     ];
 
     public function assignor()
