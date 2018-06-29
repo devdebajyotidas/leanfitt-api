@@ -17,6 +17,7 @@ class EmployeeRepository extends BaseRepository implements EmployeeRepositoryInt
         $query=$this->model()
             ->join('departments as dep','dep.id','=','employees.department_id')
             ->join('users as u','u.id','=','employees.user_id')
+            ->where("employees.is_archived",0)
             ->select(['employees.*','dep.organization_id','dep.name as department_name','u.first_name','u.last_name','u.email','u.phone','u.avatar']);
         return $query;
     }
