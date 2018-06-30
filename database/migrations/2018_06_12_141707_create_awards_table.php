@@ -14,12 +14,16 @@ class CreateAwardsTable extends Migration
     public function up()
     {
         Schema::create('awards', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('employee_id');
+            $table->increments('id')->unsigned()->index();
+            $table->integer('employee_id')->unsigned();
             $table->string('title');
             $table->string('type');
             $table->string('description')->nullable();
             $table->timestamps();
+
+            $table->foreign('employee_id')
+                ->references('id')->on('employees')
+                ->onDelete('cascade');
         });
     }
 

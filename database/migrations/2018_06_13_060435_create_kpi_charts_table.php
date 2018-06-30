@@ -14,8 +14,8 @@ class CreateKpiChartsTable extends Migration
     public function up()
     {
         Schema::create('kpi_charts', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('project_id');
+            $table->increments('id')->unsigned()->index();
+            $table->integer('project_id')->unsigned();
             $table->string('title');
             $table->string('x_label');
             $table->string('y_label');
@@ -24,6 +24,9 @@ class CreateKpiChartsTable extends Migration
             $table->integer('created_by');
             $table->timestamps();
             $table->softDeletes();
+            $table->foreign('project_id')
+                ->references('id')->on('projects')
+                ->onDelete('cascade');
         });
     }
 

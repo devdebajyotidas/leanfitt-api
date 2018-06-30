@@ -14,10 +14,16 @@ class CreateActionItemAssigneesTable extends Migration
     public function up()
     {
         Schema::create('action_item_assignees', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('action_item_id');
-            $table->integer('user_id');
+            $table->increments('id')->index();
+            $table->integer('action_item_id')->unsigned();
+            $table->integer('user_id')->unsigned();
             $table->timestamps();
+            $table->foreign('action_item_id')
+                ->references('id')->on('action_items')
+                ->onDelete('cascade');
+            $table->foreign('user_id')
+                ->references('id')->on('users')
+                ->onDelete('cascade');
         });
     }
 

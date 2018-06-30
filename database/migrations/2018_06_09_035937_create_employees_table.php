@@ -14,11 +14,18 @@ class CreateEmployeesTable extends Migration
     public function up()
     {
         Schema::create('employees', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('user_id');
-            $table->integer('department_id');
+            $table->increments('id')->unsigned()->index();
+            $table->integer('user_id')->unsigned();
+            $table->integer('department_id')->unsigned();
             $table->string('designation')->nullable();
             $table->tinyInteger('is_archived')->default(0);
+            $table->foreign('user_id')
+                ->references('id')->on('users')
+                ->onDelete('cascade');
+            $table->foreign('department_id')
+                ->references('id')->on('departments')
+                ->onDelete('cascade');
+
             $table->timestamps();
             $table->softDeletes();
         });

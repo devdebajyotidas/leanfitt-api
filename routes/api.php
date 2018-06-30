@@ -130,4 +130,7 @@ Route::group(['namespace' => 'API'], function () {
     /*Award*/
     Route::get('awards', 'AwardController@index'); /*department,organization,user_id*/
 
+    /*Test APIS*/
+    Route::get('test/delete/user/{id}', 'TestController@deleteUser');
+
 });

@@ -14,9 +14,9 @@ class CreateInvitationsTable extends Migration
     public function up()
     {
         Schema::create('invitations', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('organization_id');
-            $table->integer('department_id');
+            $table->increments('id')->index();
+            $table->integer('organization_id')->unsigned();
+            $table->integer('department_id')->unsigned();
             $table->string('first_name');
             $table->string('last_name');
             $table->string('phone');
@@ -25,6 +25,12 @@ class CreateInvitationsTable extends Migration
             $table->string('code');
             $table->tinyInteger('is_joined')->default(0);
             $table->timestamps();
+            $table->foreign('organization_id')
+                ->references('id')->on('organizations')
+                ->onDelete('cascade');
+            $table->foreign('department_id')
+                ->references('id')->on('departments')
+                ->onDelete('cascade');
         });
     }
 

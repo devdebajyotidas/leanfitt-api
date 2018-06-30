@@ -14,13 +14,16 @@ class CreateDepartmentsTable extends Migration
     public function up()
     {
         Schema::create('departments', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('organization_id');
+            $table->increments('id')->unsigned()->index();
+            $table->integer('organization_id')->unsigned();
             $table->string('name');
             $table->tinyInteger('is_archived')->default(0);
             $table->integer('created_by');
             $table->timestamps();
             $table->softDeletes();
+            $table->foreign('organization_id')
+                ->references('id')->on('organizations')
+                ->onDelete('cascade');
         });
     }
 

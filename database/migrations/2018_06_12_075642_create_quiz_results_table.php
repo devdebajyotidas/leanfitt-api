@@ -14,14 +14,20 @@ class CreateQuizResultsTable extends Migration
     public function up()
     {
         Schema::create('quiz_results', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('lean_tool_id');
-            $table->integer('employee_id');
+            $table->increments('id')->unsigned()->index();
+            $table->integer('lean_tool_id')->unsigned();
+            $table->integer('employee_id')->unsigned();
             $table->float('score');
             $table->integer('correct')->default(0);
             $table->integer('incorrect')->default(0);
             $table->tinyInteger('is_completed')->default(0);
             $table->timestamps();
+            $table->foreign('lean_tool_id')
+                ->references('id')->on('lean_tools')
+                ->onDelete('cascade');
+            $table->foreign('employee_id')
+                ->references('id')->on('employees')
+                ->onDelete('cascade');
         });
     }
 

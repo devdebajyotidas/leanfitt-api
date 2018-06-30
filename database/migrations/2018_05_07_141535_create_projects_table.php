@@ -14,8 +14,8 @@ class CreateProjectsTable extends Migration
     public function up()
     {
         Schema::create('projects', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('organization_id');
+            $table->increments('id')->unsigned()->index();
+            $table->integer('organization_id')->unsigned();
             $table->string('name');
             $table->text('goal');
             $table->integer('leader');
@@ -29,6 +29,9 @@ class CreateProjectsTable extends Migration
             $table->integer('created_by');
             $table->timestamps();
             $table->softDeletes();
+            $table->foreign('organization_id')
+                ->references('id')->on('organizations')
+                ->onDelete('cascade');
         });
     }
 

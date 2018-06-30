@@ -14,9 +14,17 @@ class CreateOrganizationAdminTable extends Migration
     public function up()
     {
         Schema::create('organization_admin', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('organization_id');
-            $table->integer('admin_id');
+            $table->increments('id')->unsigned()->index();
+            $table->integer('organization_id')->unsigned();
+            $table->integer('admin_id')->unsigned();
+
+            $table->foreign('organization_id')
+                ->references('id')->on('organizations')
+                ->onDelete('cascade');
+
+            $table->foreign('admin_id')
+                ->references('id')->on('admins')
+                ->onDelete('cascade');
         });
     }
 

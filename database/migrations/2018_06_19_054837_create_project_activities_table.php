@@ -14,11 +14,14 @@ class CreateProjectActivitiesTable extends Migration
     public function up()
     {
         Schema::create('project_activities', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('project_id');
+            $table->increments('id')->index();
+            $table->integer('project_id')->unsigned();
             $table->integer('added_by');
             $table->text('log');
             $table->timestamps();
+            $table->foreign('project_id')
+                ->references('id')->on('projects')
+                ->onDelete('cascade');
         });
     }
 

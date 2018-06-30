@@ -14,12 +14,15 @@ class CreateKpiDataPointsTable extends Migration
     public function up()
     {
         Schema::create('kpi_data_points', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('kpi_chart_id');
+            $table->increments('id')->index();
+            $table->integer('kpi_chart_id')->unsigned();
             $table->float('value');
             $table->date('target_date');
             $table->integer('created_by');
             $table->timestamps();
+            $table->foreign('kpi_chart_id')
+                ->references('id')->on('kpi_charts')
+                ->onDelete('cascade');
         });
     }
 

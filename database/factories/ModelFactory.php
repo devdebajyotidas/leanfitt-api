@@ -44,7 +44,7 @@ $factory->define(App\Models\Attachment::class, function (Faker $faker) {
 
 $factory->define(App\Models\Award::class, function (Faker $faker){
     return [
-        'employee_id'=>$faker->randomDigit,
+        'employee_id'=>rand(1,10),
         'title' => 'Award for quiz',
         'type' => 'quiz',
         'description'=>$faker->sentence
@@ -68,7 +68,7 @@ $factory->define(App\Models\Checklist::class, function (Faker $faker) {
 $factory->define(App\Models\Comment::class, function (Faker $faker) {
     $id=$faker->randomDigit;
     return [
-        'user_id'=>$faker->randomDigit,
+        'user_id'=>rand(1,10),
         'comment'=>$faker->text('100'),
         'commentable_type'=>'App\Models\ActionItem',
         'commentable_id'=>$id,
@@ -171,7 +171,7 @@ $factory->define(App\Models\OrganizationAdmin::class, function (Faker $faker) {
 
 $factory->define(App\Models\Project::class, function (Faker $faker) {
     return [
-        'organization_id'=>$faker->randomDigit,
+        'organization_id'=>rand(1,10),
         'name'=>$faker->sentence,
         'goal'=>$faker->paragraph,
         'lean_sensie'=>rand(1,10),
@@ -191,8 +191,8 @@ $factory->define(App\Models\QuizResult::class, function (Faker $faker) {
     $score=($correct/$quiz)*100;
 
     return [
-        'lean_tool_id'=>$faker->randomDigit,
-        'employee_id'=>$faker->randomDigit,
+        'lean_tool_id'=>rand(1,10),
+        'employee_id'=>rand(1,10),
         'score'=>$score,
         'correct'=>$correct,
         'incorrect'=>$incorrect
