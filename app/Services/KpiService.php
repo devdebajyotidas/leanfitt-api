@@ -140,7 +140,48 @@ class KpiService implements KpiServiceInterface
 
     public function delete($kpi_id, $user_id)
     {
-        // TODO: Implement delete() method.
+        $response=new \stdClass();
+        if(empty($kpi_id)){
+            $response->success=false;
+            $response->message="kpi_id is required";
+            return $response;
+        }
+
+        if(empty($user_id)){
+            $response->success=false;
+            $response->message="user_id is required";
+            return $response;
+        }
+
+        DB::beginTransaction();
+        $kpi=$this->kpiRepo->find($kpi_id);
+        if($kpi){
+            if($kpi->created_by==$user_id || $this->kpiRepo->isAdmin($user_id) || $this->kpiRepo->isSuperAdmin($user_id)){
+                $query=$this->kpiRepo->forceDeleteRecord($kpi);
+                if($query){
+                    DB::commit();
+                    $response->success=true;
+                    $response->message="Kpi has been deleted";
+                }
+                else{
+                    DB::rollBack();
+                    $response->success=false;
+                    $response->message="Something went wrong, try again later";
+                }
+            }
+            else{
+                DB::rollBack();
+                $response->success=false;
+                $response->message="You don't have enough permission to delete the kpi";
+            }
+        }
+        else{
+            DB::rollBack();
+            $response->success=false;
+            $response->message="Kpi point not found";
+        }
+
+        return $response;
     }
 
     public function addDataPoint($request)

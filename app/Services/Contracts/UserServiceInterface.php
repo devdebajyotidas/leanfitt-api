@@ -13,7 +13,7 @@ interface UserServiceInterface
 
     public function update($request,$user_id);
 
-    public function deactivate($user_id);
+    public function delete($user_id);
 
     public function joinEmployee($request);
 }

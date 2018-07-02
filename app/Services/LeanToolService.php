@@ -120,6 +120,43 @@ class LeanToolService implements LeanToolServiceInterface
 
     public function delete($tool_id, $user_id)
     {
-        // TODO: Implement delete() method.
+        $response=new \stdClass();
+        if(empty($tool_id)){
+            $response->success=false;
+            $response->message="tool_id is required";
+            return $response;
+        }
+
+        if(empty($user_id)){
+            $response->success=false;
+            $response->message="user_id is required";
+            return $response;
+        }
+
+        if(!$this->toolRepo->isSuperAdmin($user_id)){
+            $response->success=false;
+            $response->message="You don't have enough permission";
+            return $response;
+        }
+
+        DB::beginTransaction();
+        $tool=$this->toolRepo->find($tool_id);
+        if(count($tool)){
+            if($this->toolRepo->forceDeleteRecord($tool)){
+                DB::commit();
+                $response->success=true;
+                $response->message="Lean tool has been deleted";
+            }
+            else{
+                DB::rollBack();
+                $response->success=false;
+                $response->message="Something went wrong, try again later";
+            }
+        }
+        else{
+            DB::rollBack();
+            $response->success=false;
+            $response->message="Lean tool not found";
+        }
     }
 }

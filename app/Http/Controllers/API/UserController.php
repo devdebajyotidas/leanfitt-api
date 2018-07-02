@@ -58,9 +58,9 @@ class UserController extends Controller
         }
     }
 
-    public function deactivate($user_id){
+    public function delete($user_id){
         try{
-            $result=$this->service->deactivate($user_id);
+            $result=$this->service->delete($user_id);
             return response()->json($result);
         }catch(\Exception $e){
             $response['success']=false;

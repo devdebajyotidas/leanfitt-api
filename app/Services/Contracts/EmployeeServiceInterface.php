@@ -23,7 +23,7 @@ interface EmployeeServiceInterface
 
     public function restore($employee_id);
 
-    public function delete($employee_id,$user_id);
+    public function delete($employee_id);
 
     public function subscribe($employee_id);
 }

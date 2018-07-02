@@ -2,22 +2,27 @@
 
 namespace App\Services;
 
+use App\Repositories\DeleteRepository;
 use App\Repositories\ProjectActivityRepository;
 use App\Repositories\ProjectRepository;
 use App\Services\Contracts\ProjectServiceInterface;
 use App\Validators\ProjectValidator;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class ProjectService implements ProjectServiceInterface
 {
 
     protected $projectRepo;
     protected $activityRepo;
+    protected $deleteRepo;
     public function __construct(ProjectRepository $projectRepository,
-                                ProjectActivityRepository $projectActivityRepository)
+                                ProjectActivityRepository $projectActivityRepository,
+                                DeleteRepository $deleteRepository)
     {
         $this->projectRepo=$projectRepository;
         $this->activityRepo=$projectActivityRepository;
+        $this->deleteRepo=$deleteRepository;
     }
 
     public function index($request)
@@ -304,6 +309,53 @@ class ProjectService implements ProjectServiceInterface
 
     public function delete($project_id,$user_id)
     {
-        // TODO: Implement delete() method.
+        $response=new \stdClass();
+        if(empty($project_id)){
+            $response->success=false;
+            $response->message="project_id is required";
+            return $response;
+        }
+        if(empty($user_id)){
+            $response->success=false;
+            $response->message="user_id is required";
+            return $response;
+        }
+
+        DB::beginTransaction();
+        $project=$this->projectRepo->find($project_id);
+        if(count($project) > 0){
+           if($project->created_by==$user_id || $this->projectRepo->isSuperAdmin($user_id) || $this->projectRepo->isAdmin($user_id)){
+               $deleteActionitem=$this->deleteRepo->deleteActionItems('project',$project->id);
+               if($deleteActionitem){
+                   $self_delete=$this->projectRepo->forceDeleteRecord($project);
+                   if($self_delete){
+                       DB::commit();
+                       $response->success=true;
+                       $response->message="Project has been deleted";
+                   }
+                   else{
+                       DB::rollBack();
+                       $response->success=false;
+                       $response->message="Something went wrong, try again later";
+                   }
+               }
+               else{
+                   DB::rollBack();
+                   $response->success=false;
+                   $response->message="Something went wrong, try again later";
+               }
+           }
+           else{
+               DB::rollBack();
+               $response->success=false;
+               $response->message="You don't have enough permission to delete this project";
+           }
+        }
+        else{
+            $response->success=false;
+            $response->message="Project not found";
+        }
+
+        return $response;
     }
 }

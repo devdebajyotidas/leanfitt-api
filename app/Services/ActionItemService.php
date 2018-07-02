@@ -7,6 +7,7 @@ use App\Repositories\ActionItemAssigneeRepository;
 use App\Repositories\ActionItemRepository;
 use App\Repositories\CommentRepository;
 use App\Repositories\Contracts\AttachmentRepository;
+use App\Repositories\DeleteRepository;
 use App\Repositories\DeleteService;
 use App\Repositories\MediaRepository;
 use App\Services\Contracts\ActionItemServiceInterface;
@@ -24,17 +25,20 @@ class ActionItemService implements ActionItemServiceInterface
     protected $attachmentRepo;
     protected $mediaRepo;
     protected $commentRepo;
+    protected $deleteRepo;
     public function __construct(ActionItemAssigneeRepository $actionItemAssigneeRepository,
                                 ActionItemRepository $actionItemRepository,
                                 AttachmentRepository $attachmentRepository,
                                 CommentRepository $commentRepository,
-                                MediaRepository $mediaRepository)
+                                MediaRepository $mediaRepository,
+                                DeleteRepository $deleteRepository)
     {
         $this->itemRepo=$actionItemRepository;
         $this->assigneeRepo=$actionItemAssigneeRepository;
         $this->attachmentRepo=$attachmentRepository;
         $this->commentRepo=$commentRepository;
         $this->mediaRepo=$mediaRepository;
+        $this->deleteRepo=$deleteRepository;
     }
 
     public function index($request,$type)
@@ -364,42 +368,47 @@ class ActionItemService implements ActionItemServiceInterface
 
     public function delete($item_id, $user_id)
     {
-//        $response=new \stdClass();
-//        if(empty($item_id)){
-//            $response->success=false;
-//            $response->message="Invalid comment selection";
-//            return $response;
-//        }
-//
-//        if(empty($user_id)){
-//            $response->success=false;
-//            $response->message="user_id is required";
-//            return $response;
-//        }
-//
-//        $item=$this->commentRepo->find($item_id);
-//        if($item){
-//            if($item->created_by==$user_id || $this->itemRepo->isAdmin($user_id) || $this->itemRepo->isSuperAdmin($user_id)){
-//                $query=$this->deleteRepo->performDelete($item_id,'action_item');
-//                if($query){
-//                    $response->success=true;
-//                    $response->message="Action item has been deleted";
-//                }
-//                else{
-//                    $response->success=false;
-//                    $response->message="Something went wrong, try again later";
-//                }
-//            }
-//            else{
-//                $response->success=false;
-//                $response->message="You don't have enough permission to delete the action item";
-//            }
-//        }
-//        else{
-//            $response->success=false;
-//            $response->message="Comment not found";
-//        }
-//
-//        return $response;
+        $response=new \stdClass();
+        if(empty($item_id)){
+            $response->success=false;
+            $response->message="item_id is required";
+            return $response;
+        }
+
+        if(empty($user_id)){
+            $response->success=false;
+            $response->message="user_id is required";
+            return $response;
+        }
+
+        DB::beginTransaction();
+        $item=$this->itemRepo->find($item_id);
+        if($item){
+            if($item->created_by==$user_id || $this->itemRepo->isAdmin($user_id) || $this->itemRepo->isSuperAdmin($user_id)){
+                $query=$this->deleteRepo->deleteActionItems('self',$item->id);
+                if($query){
+                    DB::commit();
+                    $response->success=true;
+                    $response->message="Action item has been deleted";
+                }
+                else{
+                    DB::rollBack();
+                    $response->success=false;
+                    $response->message="Something went wrong, try again later";
+                }
+            }
+            else{
+                DB::rollBack();
+                $response->success=false;
+                $response->message="You don't have enough permission to delete the action item";
+            }
+        }
+        else{
+            DB::rollBack();
+            $response->success=false;
+            $response->message="Comment not found";
+        }
+
+        return $response;
     }
 }

@@ -409,9 +409,35 @@ class EmployeeService implements EmployeeServiceInterface
         return $response;
     }
 
-    public function delete($employee_id, $user_id)
+    public function delete($employee_id)
     {
-        // TODO: Implement delete() method.
+        $response=new \stdClass();
+        if(empty($employee_id)){
+            $response->success=false;
+            $response->message="employee_id is required";
+            return $response;
+        }
+
+        DB::beginTransaction();
+        $employee=$this->empRepo->find($employee_id);
+        if(count($employee) > 0){
+            if($this->empRepo->forceDeleteRecord($employee)){
+                DB::commit();
+                $response->success=true;
+                $response->message="Employee has been deleted";
+            }
+            else{
+                $response->success=false;
+                $response->message="Something went wrong, try again later";
+            }
+        }
+        else{
+            $response->success=false;
+            $response->message="Employee not found";
+        }
+
+        return $response;
+
     }
     public function subscribe($employee_id)
     {

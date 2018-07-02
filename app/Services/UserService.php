@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Mail\DeactivationMail;
 use App\Mail\VerificationMail;
 use App\Repositories\AdminRepository;
 use App\Repositories\DeviceRepository;
@@ -241,23 +242,26 @@ class UserService implements UserServiceInterface
         }
     }
 
-    public function deactivate($user_id) //Find all association
+    public function delete($user_id)
     {
         $response=new \stdClass();
         if(empty($user_id)){
             $response->success=false;
-            $response->message="Invalid account selection";
+            $response->message="user_id is required";
             return $response;
         }
 
         DB::beginTransaction();
         $user=$this->userRepo->find($user_id);
+
+        /*Stop Subscription*/
+
         $query=$user->forceDelete($user_id);
         if($query){
-            Mail::to($user->email);
+            Mail::to($user->email)->send(new DeactivationMail($user->toArray()));
             DB::commit();
             $response->success=true;
-            $response->message="Account has been deactivated";
+            $response->message="Account has been deleted";
             return $response;
         }
         else{
@@ -266,6 +270,8 @@ class UserService implements UserServiceInterface
             $response->message="Something went wrong, try again later";
             return $response;
         }
+
+        return $response;
     }
 
     public function joinEmployee($request)

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Repositories\AdminRepository;
+use App\Repositories\DeleteRepository;
 use App\Repositories\MediaRepository;
 use App\Repositories\OrganizationAdminRepository;
 use App\Repositories\OrganizationRepository;
@@ -16,15 +17,18 @@ class OrganizationService implements OrganizationServiceInterface
     protected $adminRepo;
     protected $orgAdminRepo;
     protected $mediaRepo;
+    protected $deleteRepo;
     public function __construct(OrganizationRepository $organizationRepository,
                                 OrganizationAdminRepository $organizationAdminRepository,
                                 AdminRepository $adminRepository,
-                                MediaRepository $mediaRepository)
+                                MediaRepository $mediaRepository,
+                                DeleteRepository $deleteRepository)
     {
         $this->orgAdminRepo=$organizationAdminRepository;
         $this->organiztionRepo=$organizationRepository;
         $this->adminRepo=$adminRepository;
         $this->mediaRepo=$mediaRepository;
+        $this->deleteRepo=$deleteRepository;
     }
 
     public function all()
@@ -176,27 +180,57 @@ class OrganizationService implements OrganizationServiceInterface
         return $response;
     }
 
-    public function removeOrganization($org_id,$user_id)
+    public function removeOrganization($organization_id,$user_id)
     {
         $response=new \stdClass();
-        if(empty($org_id)){
+        if(empty($organization_id)){
             $response->success=false;
-            $response->messge="Invalid organization selection";
+            $response->messge="organization_id is required";
             return $response;
         }
 
-        $query=$this->organiztionRepo->find($org_id)->history()->forceDelete();
+        if(!$this->organiztionRepo->isSuperAdmin($user_id) || !$this->organiztionRepo->isAdmin($user_id)){
+            $response->success=false;
+            $response->messge="You don't have enough permission to delete the organization";
+            return $response;
+        }
 
-        if($query){
-             $response->success=true;
-             $response->message="Organization has been deleted";
+        DB::beginTransaction();
+        $proDelCount=0;
+
+        $organization=$this->organiztionRepo->with('project.actionItem')->where('id',$organization_id)->first();
+
+        $pro_actions=count($organization['project'][0]['actionItem']) > 0 ? $organization['project'][0]['actionItem']->map(function($action){
+            return $action->id;
+        })->toArray() : [];
+
+//        $report_actions=count($organization['report'][0]['actionItem']) > 0 ? $organization['report'][0]['actionItem']->map(function($action){
+//            return $action->id;
+//        })->toArray() : [];
+
+        if(count($pro_actions) > 0){
+            for ($i=0;$i<count($pro_actions);$i++){
+                $proDel=$this->deleteRepo->deleteActionItems('project',$pro_actions[$i]);
+                if($proDel){
+                    $proDelCount++;
+                }
+            }
         }
         else{
-            $response->success=true;
-            $response->message="Something went wrong, try again later";
+            $proDelCount++;
+        }
+
+        if($proDelCount > 0 && $organization->forceDelete()){
+            DB::commit();
+            $response->success=false;
+            $response->messge="Organziation has been deleted";
+        }
+        else{
+            DB::rollBack();
+            $response->success=false;
+            $response->messge="Something went wrong, try again later";
         }
 
         return $response;
-        /*Affected-> organization,admins,projects,projects->actio items->realated,employees,dpartments,quiz result*/
     }
 }

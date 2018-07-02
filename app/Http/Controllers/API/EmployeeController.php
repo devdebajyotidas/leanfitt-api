@@ -113,9 +113,9 @@ class EmployeeController extends Controller
         }
     }
 
-    public function delete($employee_id,$user_id){
+    public function delete($employee_id){
         try{
-            $result=$this->service->delete($employee_id,$user_id);
+            $result=$this->service->delete($employee_id);
             return response()->json($result);
         }catch(\Exception $e){
             $response['success']=false;

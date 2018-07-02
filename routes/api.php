@@ -31,7 +31,7 @@ Route::group(['namespace' => 'API'], function () {
     Route::get('user/accounts/{user_id}', 'UserController@accounts'); //associated accounts for switch
     Route::get('user/profile/{user_id}', 'UserController@profile');
     Route::put('user/profile/{user_id}', 'UserController@update');
-    Route::get('account/deactivate/{user_id}', 'UserController@deactivate');
+    Route::delete('account/delete/{user_id}', 'UserController@deactivate');
     Route::post('account/join/employee', 'UserController@joinEmployee'); /*if admin and want to join as employee*/
 
     /*Organization*/
@@ -52,7 +52,7 @@ Route::group(['namespace' => 'API'], function () {
     Route::post('employees/join', 'EmployeeController@join'); /*join invited*/
     Route::get('employees/archive/{employee_id}', 'EmployeeController@archive');
     Route::get('employees/restore/{employee_id}', 'EmployeeController@restore');
-    Route::delete('employees/{employee_id}/{user_id}', 'EmployeeController@delete');
+    Route::delete('employees/{employee_id}', 'EmployeeController@delete');
 
     Route::post('employees/subscribe/{employee_id}', 'EmployeeController@subscribe');
 
@@ -90,7 +90,7 @@ Route::group(['namespace' => 'API'], function () {
 
     Route::get('items/archive/{item_id}', 'ActionItemController@archive');
     Route::get('items/restore/{item_id}', 'ActionItemController@restore');
-    Route::get('items/delete/{item_id}/{user_id}', 'ActionItemController@delete');
+    Route::delete('items/delete/{item_id}/{user_id}', 'ActionItemController@delete');
 
     /*Comment*/
     Route::post('comment', 'CommentController@create'); /*item_id*/
@@ -129,8 +129,5 @@ Route::group(['namespace' => 'API'], function () {
 
     /*Award*/
     Route::get('awards', 'AwardController@index'); /*department,organization,user_id*/
-
-    /*Test APIS*/
-    Route::get('test/delete/user/{id}', 'TestController@deleteUser');
 
 });
