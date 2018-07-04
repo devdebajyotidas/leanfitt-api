@@ -2,13 +2,14 @@
 
 namespace App\Validators;
 
-class ReportValidator extends BaseValidator
+
+class ReportDefaultValidator extends BaseValidator
 {
     public static $rules=[
         'create'=>[
             'report_category_id'=>'required',
-            'project_id'=>'required',
-            'created_by'=>'required'
+            'label'=>'required',
+            'level'=>'required'
         ]
     ];
 }

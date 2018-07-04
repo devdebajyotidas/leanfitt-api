@@ -53,4 +53,7 @@ class Project extends Model
         return $this->morphMany(Attachment::class,'attachable');
     }
 
+    public function reports(){
+        return $this->hasMany(Report::class);
+    }
 }

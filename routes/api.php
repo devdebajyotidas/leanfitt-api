@@ -123,11 +123,42 @@ Route::group(['namespace' => 'API'], function () {
     Route::post('kpi/data/filter', 'KpiController@filterDataPoint'); /*kpi_id,start_date,end_date*/
     Route::delete('kpi/data/{point_id}/{user_id}', 'KpiController@deleteDataPoint');
 
-    /*Report*/
-
-    /*Dashboard*/
-
     /*Award*/
     Route::get('awards', 'AwardController@index'); /*department,organization,user_id*/
 
+    /*Report*/
+    Route::get('reports', 'ReportController@index'); /*all reports filterable organization projects*/
+    Route::get('reports/names', 'ReportController@names'); /*all the report name*/
+    Route::get('reports/show/{report_id}', 'ReportController@show'); /*get the report*/
+    Route::post('reports', 'ReportController@create'); /*get the report*/
+    Route::delete('reports/delete/{report_id}/{user_id}', 'ReportController@delete'); /*get the report*/
+
+    Route::get('reports/grid/{report_id}', 'ReportController@showGridData'); /*display all the grid data*/
+    Route::post('reports/grid', 'ReportController@createGridData'); /*new grid data*/
+    Route::delete('reports/grid/{grid_id}', 'ReportController@deleteGridData'); /*Delete a grid data*/
+
+    Route::get('reports/chart/{report_id}', 'ReportController@showChartData');
+    Route::post('reports/chart', 'ReportController@createChartData');
+    Route::delete('reports/chart/{chart_id}', 'ReportController@deleteChartData');
+    Route::post('reports/chart/axis/{report_id}', 'ReportController@changeChartAxis');
+
+    Route::get('reports/default/{report_id}/{level}', 'ReportController@showDefaultData'); /*filter using type*/
+    Route::get('reports/element/{default_id}/{report_id}', 'ReportController@showDefaultElementData'); /*filter using sort*/
+    Route::post('reports/default', 'ReportController@createDefaultData');
+    Route::post('reports/element', 'ReportController@createDefaultElementData');
+    Route::delete('reports/default/{default_id}', 'ReportController@deleteDefaultData');
+    Route::delete('reports/element/{element_id}', 'ReportController@deleteDefaultElementData');
+    Route::get('reports/default/assignments/{report_id}/{level}', 'ReportController@showDefaultAssignments');
+    Route::get('reports/element/assignments/{report_id}/{level}', 'ReportController@showElementAssignments');
+    Route::post('reports/default/assignments', 'ReportController@createDefaultAssignments');
+    Route::post('reports/element/assignments', 'ReportController@createElementAssignments');
+    Route::delete('reports/default/assignments/{assignment_id}', 'ReportController@deleteDefaultAssignments');
+    Route::delete('reports/default/element/assignments/{assignment_id}', 'ReportController@deleteElementAssignments');
+
+    Route::get('reports/problem/{report_id}', 'ReportController@showFive');
+    Route::post('reports/problem', 'ReportController@createFive');
+//    Route::get('reports/five/why/{report_id}', 'ReportController@showFiveWhy');
+    Route::post('reports/reason', 'ReportController@createFiveWhy');
+    Route::delete('reports/problem/{problem_id}', 'ReportController@deleteFive');
+    Route::delete('reports/reason/{reason_id}', 'ReportController@deleteFiveWhy');
 });

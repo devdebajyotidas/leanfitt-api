@@ -6,20 +6,9 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface ReportRepositoryInterface
 {
-    /**
-     * @return Collection
-     */
-    public function getAllReports():Collection;
+    public function allReports();
 
-    /**
-     * @param int|Project $project
-     * @return Collection
-     */
-    public function getAllReportsByProject($project):Collection;
+    public function showReport($report_id);
 
-//    /**
-//     * @param Repo$report
-//     * @return Collection
-//     */
-//    public function getReportDetails($report):Collection;
+    public function getCategory($report_id);
 }

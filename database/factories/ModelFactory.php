@@ -210,10 +210,3 @@ $factory->define(App\Models\User::class, function (Faker $faker) {
         'verification_token'=>$faker->uuid,
     ];
 });
-
-//$factory->define(App\Models\Media::class, function (Faker $faker) {
-//    return [
-//        'name'=>$faker->image(),
-//        'full_name'=>$faker->
-//    ];
-//});
