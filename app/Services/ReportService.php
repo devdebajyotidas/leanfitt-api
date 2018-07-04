@@ -817,11 +817,23 @@ class ReportService implements ReportServiceInterface
         $response=new \stdClass();
         if(empty($report_id)){
             $response->success=false;
+            $response->data=null;
             $response->message="Report id field is required";
             return $response;
         }
         $query=$this->problemRepo->getProblems($report_id);
-        return $query;
+        if(count($query) > 0){
+            $response->success=true;
+            $response->data=$query;
+            $response->message="Data found";
+        }
+        else{
+            $response->success=false;
+            $response->data=null;
+            $response->message="No data found";
+        }
+
+        return $response;
     }
 
 //    public function showFiveWhy($report_id)

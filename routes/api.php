@@ -149,11 +149,11 @@ Route::group(['namespace' => 'API'], function () {
     Route::delete('reports/default/{default_id}', 'ReportController@deleteDefaultData');
     Route::delete('reports/element/{element_id}', 'ReportController@deleteDefaultElementData');
     Route::get('reports/default/assignments/{report_id}/{level}', 'ReportController@showDefaultAssignments');
-    Route::get('reports/element/assignments/{report_id}/{level}', 'ReportController@showElementAssignments');
+    Route::get('reports/element/assignments/{default_id}/{level}', 'ReportController@showElementAssignments');
     Route::post('reports/default/assignments', 'ReportController@createDefaultAssignments');
     Route::post('reports/element/assignments', 'ReportController@createElementAssignments');
     Route::delete('reports/default/assignments/{assignment_id}', 'ReportController@deleteDefaultAssignments');
-    Route::delete('reports/default/element/assignments/{assignment_id}', 'ReportController@deleteElementAssignments');
+    Route::delete('reports/element/assignments/{assignment_id}', 'ReportController@deleteElementAssignments');
 
     Route::get('reports/problem/{report_id}', 'ReportController@showFive');
     Route::post('reports/problem', 'ReportController@createFive');
