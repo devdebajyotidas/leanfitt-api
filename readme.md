@@ -30,7 +30,21 @@ You will need a `.env` file that will be ignored but used to connect to your loc
 
 Note
 -------------
+To develop the report you must follow the workflow of the apps.If we categorize all the reports we will see 
+4 types of report.
 
+* **Grid**
+This is for report like cards and add the content inside them.
+
+* **Chart**
+For all the charts report
+
+* **Default and Element Selection**
+To make a list from default list and assign them
+
+* **Five Why Analysis**
+
+In the api it's url contain `problem` and `reason`
 
 
 Versions
