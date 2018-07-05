@@ -8,10 +8,12 @@ class LeanTool extends Model
 {
     protected  $fillable=[
         'name',
+        'featured_image',
         'overview',
         'steps',
         'case_studies',
         'quiz',
+        'assessment',
         'created_by'
     ];
 
@@ -23,7 +25,7 @@ class LeanTool extends Model
         return $this->hasMany(QuizResult::class);
     }
 
-    public function itemAssignment(){
-        return $this->belongsTo(ActionItemAssignment::class);
+    public function assessmentResult(){
+        return $this->hasMany(AssessmentResult::class,'lean_tool_id','id');
     }
 }

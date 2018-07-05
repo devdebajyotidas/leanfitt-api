@@ -143,12 +143,20 @@ $factory->define(App\Models\LeanTool::class, function (Faker $faker) {
         $content=$answers;
         $quiz[]=['question'=>$question,'content'=>$content];
     }
+
+    $assessment=array();
+    for ($i=0;$i<10;$i++) {
+        $as = $faker->paragraph;
+        array_push($assessment,$as);
+    }
+
     return [
         'name'=>$faker->word,
         'overview'=>$faker->text(),
         'case_studies'=>$faker->text(),
         'steps'=>$faker->text(),
         'quiz'=>json_encode($quiz),
+        'assessment'=>json_encode($assessment),
         'created_by'=>$faker->randomDigit,
     ];
 });

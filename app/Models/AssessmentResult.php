@@ -17,6 +17,6 @@ class AssessmentResult extends Model
     }
 
     public function tool(){
-        return $this->hasOne(LeanTool::class);
+        return $this->belongsTo(LeanTool::class);
     }
 }

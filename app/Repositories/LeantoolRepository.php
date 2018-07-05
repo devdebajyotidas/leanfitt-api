@@ -32,4 +32,18 @@ class LeantoolRepository extends BaseRepository implements LeanToolsRepositoryIn
 
         return $query;
     }
+
+    public function allAssessment($employee_id)
+    {
+        $query=$this->model()->with(['assessmentResult'=>function($query) use($employee_id){
+            $query->where('employee_id',$employee_id)->orderBy('created_at');
+        }])->get(['assessment','name','id','featured_image']);
+
+        return $query;
+    }
+
+    public function getAssessment($tool_id,$employee_id){
+        $query=$this->model()->where('id',$tool_id)->first(['id','name','assessment','featured_image']);
+        return $query;
+    }
 }

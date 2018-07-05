@@ -77,7 +77,13 @@ Route::group(['namespace' => 'API'], function () {
     Route::get('quiz/{user_id}', 'QuizController@index');
     Route::get('quiz/taken/list', 'QuizController@taken'); /*use filter for department and organization eg. url?department=1*/
     Route::get('quiz/take/{tool_id}/{user_id}', 'QuizController@show'); /*display with result, if result then display result page*/
-    Route::post('quiz/post/result', 'QuizController@create');;
+    Route::post('quiz/post/result', 'QuizController@create');
+
+    /*Assessment*/
+    Route::get('assessment/{user_id}', 'AssessmentController@index');
+    Route::get('assessment/show/{tool_id}/{user_id}', 'AssessmentController@show');
+    Route::get('assessment/taken/list', 'AssessmentController@list'); /*department and organization,user*/
+    Route::post('assessment/result', 'AssessmentController@create');
 
     /*Action Items*/
     Route::get('items/{type}', 'ActionItemController@index'); /*use filter for department and organization eg. url?department=1&type=report*/

@@ -19,8 +19,8 @@ class CreateAssessmentResultsTable extends Migration
             $table->integer('lean_tool_id')->unsigned();
             $table->text('result');
             $table->timestamps();
-            $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');
             $table->foreign('lean_tool_id')->references('id')->on('lean_tools')->onDelete('cascade');
+            $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');
         });
     }
 
