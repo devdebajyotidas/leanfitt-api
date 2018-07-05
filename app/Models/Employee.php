@@ -51,4 +51,8 @@ class Employee extends Model
     public function subscription(){
         return $this->hasOne(Subscription::class);
     }
+
+    public function itemAssignments(){
+        return $this->hasMany(ActionItemAssignment::class);
+    }
 }

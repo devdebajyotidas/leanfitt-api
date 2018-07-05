@@ -22,4 +22,8 @@ class LeanTool extends Model
     public function quizResult(){
         return $this->hasMany(QuizResult::class);
     }
+
+    public function itemAssignment(){
+        return $this->belongsTo(ActionItemAssignment::class);
+    }
 }
