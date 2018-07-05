@@ -58,5 +58,8 @@ class ActionItem extends Model
         return $this->morphMany(Attachment::class,'attachable');
     }
 
+    public function assignments(){
+        return $this->hasMany(ActionItemAssignment::class,'action_item_id','id');
+    }
 
 }

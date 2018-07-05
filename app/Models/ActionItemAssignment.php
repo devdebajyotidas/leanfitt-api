@@ -6,5 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class ActionItemAssignment extends Model
 {
-    //
+    protected $fillable=[
+        'action_item_id',
+        'target_date',
+        'note'
+    ];
+
+    public function item(){
+        return $this->belongsTo(ActionItem::class);
+    }
 }
