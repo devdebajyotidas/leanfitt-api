@@ -88,6 +88,11 @@ Route::group(['namespace' => 'API'], function () {
     Route::post('items/member', 'ActionItemController@addAssignee'); /*item_id*/
     Route::delete('items/member/{item_id}/{assignee_id}/{user_id}', 'ActionItemController@removeAssignee');
 
+    Route::get('items/assignments/all', 'ActionItemController@getAssignment');
+    Route::post('items/assignments', 'ActionItemController@addAssignment');
+    Route::put('items/assignments/{assignment_id}', 'ActionItemController@updateAssignment');
+    Route::delete('items/assignments/{assignment_id}', 'ActionItemController@removeAssignment');
+
     Route::get('items/archive/{item_id}', 'ActionItemController@archive');
     Route::get('items/restore/{item_id}', 'ActionItemController@restore');
     Route::delete('items/delete/{item_id}/{user_id}', 'ActionItemController@delete');

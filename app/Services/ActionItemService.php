@@ -4,6 +4,7 @@ namespace App\Services;
 
 
 use App\Repositories\ActionItemAssigneeRepository;
+use App\Repositories\ActionItemAssignmentRepository;
 use App\Repositories\ActionItemRepository;
 use App\Repositories\CommentRepository;
 use App\Repositories\Contracts\AttachmentRepository;
@@ -14,6 +15,7 @@ use App\Services\Contracts\ActionItemServiceInterface;
 use App\Validators\ActionItemAssigneeValidator;
 use App\Validators\ActionItemValidator;
 use App\Validators\CommentValidator;
+use App\Validators\ItemAssignmentValidator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -26,12 +28,14 @@ class ActionItemService implements ActionItemServiceInterface
     protected $mediaRepo;
     protected $commentRepo;
     protected $deleteRepo;
+    protected $assignmentRepo;
     public function __construct(ActionItemAssigneeRepository $actionItemAssigneeRepository,
                                 ActionItemRepository $actionItemRepository,
                                 AttachmentRepository $attachmentRepository,
                                 CommentRepository $commentRepository,
                                 MediaRepository $mediaRepository,
-                                DeleteRepository $deleteRepository)
+                                DeleteRepository $deleteRepository,
+                                ActionItemAssignmentRepository $itemAssignmentRepository)
     {
         $this->itemRepo=$actionItemRepository;
         $this->assigneeRepo=$actionItemAssigneeRepository;
@@ -39,6 +43,7 @@ class ActionItemService implements ActionItemServiceInterface
         $this->commentRepo=$commentRepository;
         $this->mediaRepo=$mediaRepository;
         $this->deleteRepo=$deleteRepository;
+        $this->assignmentRepo=$itemAssignmentRepository;
     }
 
     public function index($request,$type)
@@ -99,10 +104,10 @@ class ActionItemService implements ActionItemServiceInterface
     {
         $response=new \stdClass();
         if(empty($item_id)){
-           $response->success=false;
-           $response->data=null;
-           $response->message="Please select an action item";
-           return $response;
+            $response->success=false;
+            $response->data=null;
+            $response->message="Please select an action item";
+            return $response;
         }
 
         $query=$this->itemRepo->getItem($item_id);
@@ -315,6 +320,110 @@ class ActionItemService implements ActionItemServiceInterface
         return $response;
     }
 
+    /*Assignment Service*/
+
+    public function getAssignment()
+    {
+        $response=new \stdClass();
+        $query=$this->assignmentRepo->getAssignments();
+        if(count($query) > 0){
+            $response->success=true;
+            $response->data=$query;
+            $response->message="Assignments found";
+        }
+        else{
+            $response->success=false;
+            $response->data=null;
+            $response->message="No assignment found";
+        }
+
+        return $response;
+    }
+
+    public function addAssignment($request)
+    {
+        $response=new \stdClass();
+        $validator=new ItemAssignmentValidator($request->all(),'create');
+        if($validator->fails()){
+            $response->success=false;
+            $response->message=$validator->messages()->first();
+            return $response;
+        }
+
+        DB::beginTransaction();
+        $query=$this->assignmentRepo->create($request->all());
+        if($query){
+            DB::commit();
+            $response->success=true;
+            $response->message="Assignment has been added";
+        }
+        else{
+            DB::rollBack();
+            $response->success=false;
+            $response->message="Something went wrong, try again later";
+        }
+
+        return $response;
+    }
+
+    public function updateAssignment($request, $assignment_id)
+    {
+        $response=new \stdClass();
+
+        if(empty($assignment_id)){
+            $response->success=false;
+            $response->message="Assignment id field is required";
+            return $response;
+        }
+
+        DB::beginTransaction();
+        $query=$this->assignmentRepo->update($assignment_id,$request->all());
+        if($query){
+            DB::commit();
+            $response->success=true;
+            $response->message="Assignment has been updated";
+        }
+        else{
+            DB::rollBack();
+            $response->success=false;
+            $response->message="Something went wrong, try again later";
+        }
+
+        return $response;
+    }
+
+    public function removeAssignment($assignment_id)
+    {
+        $response=new \stdClass();
+        if(empty($assignment_id)){
+            $response->success=false;
+            $response->message="Assignment id field is required";
+            return $response;
+        }
+
+        DB::beginTransaction();
+        $assignment=$this->assignmentRepo->find($assignment_id);
+        if(count($assignment) > 0){
+            $query=$this->assignmentRepo->forceDeleteRecord($assignment);
+            if($query){
+                DB::commit();
+                $response->success=true;
+                $response->message='Assignment has been deleted';
+            }
+            else{
+                DB::rollBack();
+                $response->success=false;
+                $response->message="Something went wrong, try again later";
+            }
+        }
+        else{
+            DB::rollBack();
+            $response->success=false;
+            $response->message="Assignment not found";
+        }
+
+        return $response;
+    }
 
     public function archive($item_id)
     {

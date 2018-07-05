@@ -80,6 +80,51 @@ class ActionItemController extends Controller
         }
     }
 
+    public function getAssignment(){
+        try{
+            $result=$this->service->getAssignment();
+            return response()->json($result);
+        }catch(\Exception $e){
+            $response['success']=false;
+            $response['message']=$e->getMessage();
+            return response()->json($response);
+        }
+    }
+
+    public function addAssignment(Request $request){
+        try{
+            $result=$this->service->addAssignment($request);
+            return response()->json($result);
+        }catch(\Exception $e){
+            $response['success']=false;
+            $response['message']=$e->getMessage();
+            return response()->json($response);
+        }
+    }
+
+    public function updateAssignment(Request $request,$assignment_id){
+        try{
+            $result=$this->service->updateAssignment($request,$assignment_id);
+            return response()->json($result);
+        }catch(\Exception $e){
+            $response['success']=false;
+            $response['message']=$e->getMessage();
+            return response()->json($response);
+        }
+    }
+
+    public function removeAssignment($assignment_id){
+        try{
+            $result=$this->service->removeAssignment($assignment_id);
+            return response()->json($result);
+        }catch(\Exception $e){
+            $response['success']=false;
+            $response['message']=$e->getMessage();
+            return response()->json($response);
+        }
+    }
+
+
     public function archive($item_id){
         try{
             $result=$this->service->archive($item_id);

@@ -17,6 +17,14 @@ interface ActionItemServiceInterface
 
    public function removeAssignee($item_id,$assignee_id,$user_id);
 
+   public function getAssignment();
+
+   public function addAssignment($request);
+
+   public function updateAssignment($request,$assignment_id);
+
+   public function removeAssignment($assignment_id);
+
    public function archive($item_id);
 
    public function restore($item_id);

@@ -13,6 +13,6 @@ class ActionItemAssignment extends Model
     ];
 
     public function item(){
-        return $this->belongsTo(ActionItem::class);
+        return $this->belongsTo(ActionItem::class,'action_item_id','id');
     }
 }
